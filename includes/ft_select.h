@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/05 23:20:55 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/06 18:39:30 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,14 @@
 
 typedef struct	s_tkeys
 {
-	char	*right;
-	char	*left;
-	char	*up;
-	char	*down;
+	char	*rightk;
+	char	*rightm;
+	char	*leftk;
+	char	*leftm;
+	char	*upk;
+	char	*upm;
+	char	*downk;
+	char	*downm;
 }				t_tkeys;
 
 void	chk_keys(int fd);

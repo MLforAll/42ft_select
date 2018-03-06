@@ -6,7 +6,7 @@
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/20 21:41:19 by kdumarai          #+#    #+#              #
-#    Updated: 2018/03/05 23:01:31 by kdumarai         ###   ########.fr        #
+#    Updated: 2018/03/06 17:30:53 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = ft_select
 
 CC_FLAGS = -Wall -Werror -Wextra
 CC_LIB = -I includes -I libft
-LD_FLAGS = -L libft -lft -lncurses
+LD_FLAGS = -L libft -lft -ltermcap
 
 LIBFT = libft/libft.a
 

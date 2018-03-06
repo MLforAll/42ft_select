@@ -6,12 +6,13 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/05 23:02:27 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/06 18:40:25 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include "ft_select.h"
 
 /*
@@ -51,6 +52,17 @@ static void		fatal(const char *app, const char *err)
 	exit(EXIT_FAILURE);
 }
 
+static int		outcap(char *name)
+{
+	char	*cap;
+
+	cap = tgetstr(name, NULL);
+	if (!cap)
+		return (FALSE);
+	tputs(cap, 1, &putcf);
+	return (TRUE);
+}
+
 /*
 ** main
 **
@@ -66,10 +78,12 @@ int				main(int ac, char **av)
 	signal(SIGINT, SIG_IGN);
 	if (!(termtype = getenv("TERM")))
 		fatal(av[0], "TERM env var missing!");
-	if (!tgetent(NULL, termtype))
+	if (tgetent(NULL, termtype) <= 0)
 		fatal(av[0], "Invalid terminal!");
 	if (ac == 1 || !(choices = get_choices(av + 1)))
 		return (EXIT_FAILURE);
+	outcap("cl");
+	outcap("ks");
 	ft_putlst(choices);
 	chk_keys(STDIN_FILENO);
 	ft_lstdel(&choices, &ft_lstdelf);

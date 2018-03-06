@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/06 18:40:25 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/06 22:11:57 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,17 +52,6 @@ static void		fatal(const char *app, const char *err)
 	exit(EXIT_FAILURE);
 }
 
-static int		outcap(char *name)
-{
-	char	*cap;
-
-	cap = tgetstr(name, NULL);
-	if (!cap)
-		return (FALSE);
-	tputs(cap, 1, &putcf);
-	return (TRUE);
-}
-
 /*
 ** main
 **
@@ -84,8 +73,10 @@ int				main(int ac, char **av)
 		return (EXIT_FAILURE);
 	outcap("cl");
 	outcap("ks");
+	outcap("vi");
 	ft_putlst(choices);
 	chk_keys(STDIN_FILENO);
 	ft_lstdel(&choices, &ft_lstdelf);
+	outcap("ve");
 	return (EXIT_SUCCESS);
 }

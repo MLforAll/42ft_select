@@ -6,7 +6,7 @@
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/20 21:41:19 by kdumarai          #+#    #+#              #
-#    Updated: 2018/03/06 17:30:53 by kdumarai         ###   ########.fr        #
+#    Updated: 2018/03/07 20:23:01 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ INCLUDES = $(addprefix $(INCDIR)/, $(INCFILES))
 SRCDIR = srcs
 SRCFILES = ft_select.c \
 		   interact.c \
+		   print.c \
 		   misc.c
 SRCS = $(addprefix $(SRCDIR)/, $(SRCFILES))
 NSRC = $(shell echo "$(SRCFILES)" | awk '{print NF}')

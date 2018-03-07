@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/06 22:14:23 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/07 21:57:15 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,9 @@
 typedef struct	s_tkeys
 {
 	char			*rightk;
-	char			*rightm;
 	char			*leftk;
-	char			*leftm;
 	char			*upk;
-	char			*upm;
 	char			*downk;
-	char			*downm;
 }				t_tkeys;
 
 typedef struct	s_cursor
@@ -35,7 +31,12 @@ typedef struct	s_cursor
 	size_t			max;
 }				t_cursor;
 
-void	chk_keys(int fd);
+/*
+**
+*/
+
+void	print_with_csr(t_list *choices, t_cursor *csr);
+t_list	*chk_keys(int fd, t_list *choices);
 
 /*
 ** Misc/Utilities

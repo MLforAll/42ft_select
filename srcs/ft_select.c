@@ -6,13 +6,12 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/06 22:11:57 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/07 21:20:19 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <sys/ioctl.h>
 #include "ft_select.h"
 
 /*
@@ -74,8 +73,7 @@ int				main(int ac, char **av)
 	outcap("cl");
 	outcap("ks");
 	outcap("vi");
-	ft_putlst(choices);
-	chk_keys(STDIN_FILENO);
+	chk_keys(STDIN_FILENO, choices);
 	ft_lstdel(&choices, &ft_lstdelf);
 	outcap("ve");
 	return (EXIT_SUCCESS);

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/07 21:57:26 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/08 22:24:23 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ static void	interact(char *buff, t_tkeys *kcmps, t_cursor *csr)
 		csr->pos--;
 	if (ft_strcmp(buff, kcmps->downk) == 0 && csr->pos < csr->max)
 		csr->pos++;
-	if (ft_strncmp(buff, " ", 1) == 0)
+	/*if (ft_strcmp(buff, " ") == 0)
 	{
-		ft_putchar('\r');
+		ft_putchar_fd('\r', STDIN_FILENO);
 		outcap("mr");
-	}
+	}*/
 }
 
 static void	fill_kcmps(t_tkeys *dest)
@@ -59,26 +59,27 @@ static void	fill_kcmps(t_tkeys *dest)
 	dest->leftk = tgetstr("kl", NULL);
 }
 
-t_list		*chk_keys(int fd, t_list *choices)
+t_list		*chk_keys(int fd, t_choice *choices, t_cursor *csr)
 {
 	t_list			*ret;
 	t_tkeys			kcmps;
-	t_cursor		csr;
 	char			buff[5];
 
 	ret = NULL;
 	fill_kcmps(&kcmps);
-	csr.max = ft_lstlen(choices) - 1;
-	csr.pos = 0;
-	print_with_csr(choices, &csr);
+	print_with_csr(choices, csr);
 	set_term(fd, NO);
 	ft_bzero(buff, sizeof(buff));
 	while (read(fd, buff, 4) > 0)
 	{
-		if (*buff == 3)
+		if (ft_strcmp(buff, "\n") == 0)
+		{
+			clear_choices(csr->max);
+			return_res(ret);
 			break ;
-		interact(buff, &kcmps, &csr);
-		print_with_csr(choices, &csr);
+		}
+		interact(buff, &kcmps, csr);
+		print_with_csr(choices, csr);
 		ft_bzero(buff, sizeof(buff));
 	}
 	set_term(fd, YES);

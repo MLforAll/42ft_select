@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/06 22:15:36 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/08 22:21:04 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,26 @@ void	ft_lstdelf(void *dat, size_t datsize)
 
 int		putcf(int c)
 {
-	write(1, &c, 1);
+	write(STDIN_FILENO, &c, 1);
 	return (1);
+}
+
+/*
+** outcap_arg -- output a termcap with argument
+**
+** char*		name of termcap
+** int			number of lines affected
+*/
+
+int		outcap_arg(char *name, int affcnt)
+{
+	char	*cap;
+
+	cap = tgetstr(name, NULL);
+	if (!cap)
+		return (FALSE);
+	tputs(cap, affcnt, &putcf);
+	return (TRUE);
 }
 
 /*
@@ -47,11 +65,5 @@ int		putcf(int c)
 
 int		outcap(char *name)
 {
-	char	*cap;
-
-	cap = tgetstr(name, NULL);
-	if (!cap)
-		return (FALSE);
-	tputs(cap, 1, &putcf);
-	return (TRUE);
+	return (outcap_arg(name, 1));
 }

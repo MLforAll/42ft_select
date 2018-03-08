@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/07 21:20:19 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/08 22:24:07 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,22 @@
 ** char**		arguments of prgm aka av + 1
 */
 
-static t_list	*get_choices(char **args)
+static size_t	get_choices(t_choice **dest, char **args)
 {
-	t_list	*ret;
-	t_list	*new;
+	size_t		ret;
+	t_choice	*new;
 
-	ret = NULL;
+	if (!dest)
+		return (0);
+	ret = 0;
+	*dest = NULL;
 	while (*args)
 	{
-		if (!(new = ft_lstnew(*args, ft_strlen(*args) + 1)))
-			return (NULL);
-		ft_lstpush(&ret, new);
+		if (!(new = ft_chnew(*args, NO)))
+			return (0);
+		ft_chpush(dest, new);
 		args++;
+		ret++;
 	}
 	return (ret);
 }
@@ -60,21 +64,23 @@ static void		fatal(const char *app, const char *err)
 
 int				main(int ac, char **av)
 {
-	t_list	*choices;
-	char	*termtype;
+	t_choice	*choices;
+	t_cursor	csr;
+	char		*termtype;
 
 	signal(SIGINT, SIG_IGN);
 	if (!(termtype = getenv("TERM")))
 		fatal(av[0], "TERM env var missing!");
 	if (tgetent(NULL, termtype) <= 0)
 		fatal(av[0], "Invalid terminal!");
-	if (ac == 1 || !(choices = get_choices(av + 1)))
+	if (ac == 1 || !(csr.max = get_choices(&choices, av + 1)))
 		return (EXIT_FAILURE);
+	csr.pos = 0;
 	outcap("cl");
 	outcap("ks");
 	outcap("vi");
-	chk_keys(STDIN_FILENO, choices);
-	ft_lstdel(&choices, &ft_lstdelf);
+	chk_keys(STDIN_FILENO, choices, &csr);
+	ft_chdel(&choices);
 	outcap("ve");
 	return (EXIT_SUCCESS);
 }

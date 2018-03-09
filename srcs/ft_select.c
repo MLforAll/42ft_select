@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 19:51:21 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 20:31:18 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int				main(int ac, char **av)
 	t_cursor	csr;
 	char		*termtype;
 
-	signal(SIGINT, SIG_IGN);
 	if (!(termtype = getenv("TERM")))
 		fatal(av[0], "TERM env var missing!");
 	if (tgetent(NULL, termtype) <= 0)

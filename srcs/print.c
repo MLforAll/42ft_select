@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 19:58:59 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 20:27:14 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	print_with_csr(t_choice *choices, t_cursor *csr)
 
 void	return_res(t_choice *choices)
 {
-	int			first;
+	int				first;
 
 	first = YES;
 	while (choices)

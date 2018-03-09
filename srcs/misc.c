@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/08 22:21:04 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 19:31:44 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	ft_lstdelf(void *dat, size_t datsize)
 
 int		putcf(int c)
 {
-	write(STDIN_FILENO, &c, 1);
+	write(FT_OUT_FD, &c, 1);
 	return (1);
 }
 

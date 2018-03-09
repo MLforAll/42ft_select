@@ -6,12 +6,12 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 14:53:24 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 20:01:17 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_SELECT
-# define FT_SELECT
+#ifndef FT_SELECT_H
+# define FT_SELECT_H
 
 # include "libft.h"
 # include <termios.h>
@@ -38,34 +38,44 @@ typedef struct	s_choice
 	int				selected;
 	char			*title;
 	struct s_choice	*next;
+	struct s_choice	*prev;
 }				t_choice;
 
-/*
-**
-*/
-
-void		return_res(t_list *res);
-void		clear_choices(size_t len);
-void		print_with_csr(t_choice *choices, t_cursor *csr);
-t_list		*chk_keys(int fd, t_choice *choices, t_cursor *csr);
+# define FT_OUT_FD	STDIN_FILENO
 
 /*
-**
+** Set/Restore Terminal
 */
 
-t_choice	*ft_chnew(char *title, int selected);
-void		ft_chpush(t_choice **headref, t_choice *new);
-void		ft_chdelone(t_choice **headref, t_choice *ch);
-void		ft_chdel(t_choice **headref);
-void		switch_selected(t_choice *head, unsigned int idx);
+void			restore_terminal(void);
+int				init_terminal(void);
+
+/*
+** stuff
+*/
+
+void			return_res(t_choice *res);
+void			clear_choices(size_t len);
+void			print_with_csr(t_choice *choices, t_cursor *csr);
+void			chk_keys(t_choice **choices, t_cursor *csr);
+
+/*
+** stuff
+*/
+
+t_choice		*ft_chnew(char *title, int selected);
+void			ft_chpush(t_choice **headref, t_choice *new);
+void			ft_chdelone(t_choice **headref, t_choice *ch);
+void			ft_chdel(t_choice **headref);
+void			switch_selected(t_choice *head, unsigned int idx);
 
 /*
 ** Misc/Utilities
 */
 
-int			putcf(int c);
-int			outcap_arg(char *name, int affcnt);
-int			outcap(char *name);
-void		ft_lstdelf(void *dat, size_t datsize);
+int				putcf(int c);
+int				outcap_arg(char *name, int affcnt);
+int				outcap(char *name);
+void			ft_lstdelf(void *dat, size_t datsize);
 
 #endif

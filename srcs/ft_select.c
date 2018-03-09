@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 14:40:03 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 19:51:21 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,11 @@ int				main(int ac, char **av)
 	if (ac == 1 || !(csr.max = get_choices(&choices, av + 1)))
 		return (EXIT_FAILURE);
 	csr.pos = 0;
-	outcap("cl");
-	outcap("ks");
-	outcap("vi");
-	chk_keys(STDIN_FILENO, choices, &csr);
+	if (!init_terminal())
+		fatal(av[0], "error setting the terminal");
+	chk_keys(&choices, &csr);
+	restore_terminal();
+	return_res(choices);
 	ft_chdel(&choices);
-	outcap("ve");
-	outcap("ke");
 	return (EXIT_SUCCESS);
 }

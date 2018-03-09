@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/08 21:48:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 14:30:20 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 20:06:07 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,49 +26,42 @@ t_choice	*ft_chnew(char *title, int selected)
 	}
 	ret->selected = selected;
 	ret->next = NULL;
+	ret->prev = NULL;
 	return (ret);
 }
 
 void		ft_chpush(t_choice **headref, t_choice *new)
 {
-	t_choice	**ptr;
+	t_choice	*bw;
 
 	if (!headref)
 		return ;
-	ptr = headref;
-	while (*ptr)
-		ptr = &(*ptr)->next;
-	*ptr = new;
+	if (!*headref)
+	{
+		*headref = new;
+		return ;
+	}
+	bw = *headref;
+	while (bw->next)
+		bw = bw->next;
+	new->prev = bw;
+	bw->next = new;
 }
 
 void		ft_chdelone(t_choice **headref, t_choice *ch)
 {
 	t_choice	*bw;
-	t_choice	*prev;
-	t_choice	*tmp;
 
 	if (!headref)
 		return ;
 	bw = *headref;
-	prev = NULL;
-	while (bw)
+	if (ch->prev)
+		ch->prev->next = ch->next;
+	else
 	{
-		if (bw == ch)
-		{
-			if (prev)
-				prev->next = bw->next;
-			else
-				*headref = bw->next;
-			tmp = bw->next;
-			ft_strdel(&bw->title);
-			free(bw);
-			bw = tmp;
-		}
-		else
-		{
-			prev = bw;
-			bw = bw->next;
-		}
+		*headref = ch->next;
+		ft_strdel(&ch->title);
+		free(ch);
 	}
 }
 

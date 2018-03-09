@@ -6,37 +6,13 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 14:54:15 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 19:44:59 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include "ft_select.h"
-
-static void	set_term(int fd, int on)
-{
-	struct termios	t;
-	const tcflag_t	lflag_chg = ICANON | ECHO | ISIG;
-	const tcflag_t	oflag_chg = OPOST;
-
-	if (tcgetattr(fd, &t) == -1)
-		exit(EXIT_FAILURE);
-	if (on)
-	{
-		t.c_lflag |= lflag_chg;
-		t.c_oflag |= oflag_chg;
-	}
-	else
-	{
-		t.c_lflag &= ~lflag_chg;
-		t.c_oflag &= ~oflag_chg;
-	}
-	t.c_cc[VMIN] = 1;
-	t.c_cc[VTIME] = 0;
-	if (tcsetattr(fd, TCSADRAIN, &t) == -1)
-		exit(EXIT_FAILURE);
-}
 
 static void	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
 {
@@ -72,29 +48,22 @@ static void	fill_kcmps(t_tkeys *dest)
 	(dest->bsk)[1] = '\0';
 }
 
-t_list		*chk_keys(int fd, t_choice *choices, t_cursor *csr)
+void		chk_keys(t_choice **choices, t_cursor *csr)
 {
-	t_list			*ret;
 	t_tkeys			kcmps;
 	char			buff[5];
 
-	ret = NULL;
+	if (!choices || !csr)
+		return ;
 	fill_kcmps(&kcmps);
-	print_with_csr(choices, csr);
-	set_term(fd, NO);
+	print_with_csr(*choices, csr);
 	ft_bzero(buff, sizeof(buff));
-	while (read(fd, buff, 4) > 0)
+	while (read(FT_OUT_FD, buff, 4) > 0)
 	{
 		if (ft_strequ(buff, "\n"))
-		{
-			clear_choices(csr->max);
-			return_res(ret);
 			break ;
-		}
-		interact(buff, &kcmps, &choices, csr);
-		print_with_csr(choices, csr);
+		interact(buff, &kcmps, choices, csr);
+		print_with_csr(*choices, csr);
 		ft_bzero(buff, sizeof(buff));
 	}
-	set_term(fd, YES);
-	return (ret);
 }

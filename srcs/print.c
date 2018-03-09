@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/08 22:23:47 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 14:10:29 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,12 @@ void	clear_choices(size_t len)
 	const char		*cmstr = tgetstr("cm", NULL);
 	const char		*gotostr = tgoto(cmstr, 0, 0);
 
-	tputs(gotostr, 1, &putcf);
 	while (len--)
-		outcap("dl");
+	{
+		outcap("ce");
+		outcap("up");
+	}
+	tputs(gotostr, 1, &putcf);
 }
 
 void	print_with_csr(t_choice *choices, t_cursor *csr)

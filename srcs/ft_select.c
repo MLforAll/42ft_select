@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/08 22:24:07 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 14:40:03 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,5 +82,6 @@ int				main(int ac, char **av)
 	chk_keys(STDIN_FILENO, choices, &csr);
 	ft_chdel(&choices);
 	outcap("ve");
+	outcap("ke");
 	return (EXIT_SUCCESS);
 }

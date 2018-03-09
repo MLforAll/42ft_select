@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/08 22:16:47 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/09 14:53:24 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ typedef struct	s_tkeys
 	char			*leftk;
 	char			*upk;
 	char			*downk;
+	char			*delk;
+	char			bsk[2];
 }				t_tkeys;
 
 typedef struct	s_cursor
@@ -55,6 +57,7 @@ t_choice	*ft_chnew(char *title, int selected);
 void		ft_chpush(t_choice **headref, t_choice *new);
 void		ft_chdelone(t_choice **headref, t_choice *ch);
 void		ft_chdel(t_choice **headref);
+void		switch_selected(t_choice *head, unsigned int idx);
 
 /*
 ** Misc/Utilities

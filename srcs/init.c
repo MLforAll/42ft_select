@@ -6,13 +6,14 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/12 23:01:09 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/13 00:39:32 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 #include "ft_select.h"
 
 static struct termios	saved_t;
@@ -25,13 +26,18 @@ void					restore_terminal(void)
 	tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t);
 }
 
-static void				signal_hdl_restore(int sigc)
+static void				signal_hdl(int sigc)
 {
+	const char	sim_sigtstp[2] = {saved_t.c_cc[VSUSP], '\0'};
+
 	restore_terminal();
-	if (sigc == SIGINT)
-		exit(EXIT_SUCCESS);
-	signal(sigc, SIG_DFL);
-	raise(sigc);
+	if (sigc == SIGTSTP)
+	{
+		signal(sigc, SIG_DFL);
+		ioctl(STDIN_FILENO, TIOCSTI, sim_sigtstp);
+		return ;
+	}
+	exit(EXIT_SUCCESS);
 }
 
 int						init_terminal(void)
@@ -55,7 +61,7 @@ int						init_terminal(void)
 	sigc = 0;
 	while (sigc < 32)
 	{
-		signal(sigc, (sigc != SIGCONT) ? &signal_hdl_restore : &suspend_hdl);
+		signal(sigc, (sigc != SIGCONT) ? &signal_hdl : &suspend_hdl);
 		sigc++;
 	}
 	return (TRUE);

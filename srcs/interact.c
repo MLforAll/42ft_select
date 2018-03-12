@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 19:44:59 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/12 22:59:30 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,29 @@
 #include <stdlib.h>
 #include "ft_select.h"
 
-static void	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
+static t_choice	**lchs;
+static t_cursor	*lcsr;
+
+static void	interact(char *buff, t_tkeys *kcmps)
 {
 	t_choice		*tmp;
 	unsigned int	idx;
 
-	if (!ch)
+	if (!lchs || !kcmps)
 		return ;
-	if (ft_strequ(buff, kcmps->upk) && csr->pos > 0)
-		csr->pos--;
-	if (ft_strequ(buff, kcmps->downk) && csr->pos < csr->max)
-		csr->pos++;
+	if (ft_strequ(buff, kcmps->upk) && lcsr->pos > 0)
+		lcsr->pos--;
+	if (ft_strequ(buff, kcmps->downk) && lcsr->pos < lcsr->max)
+		lcsr->pos++;
 	if (ft_strequ(buff, " "))
-		switch_selected(*ch, csr->pos);
+		switch_selected(*lchs, lcsr->pos);
 	if (ft_strequ(buff, kcmps->delk) || ft_strequ(buff, kcmps->bsk))
 	{
-		tmp = *ch;
-		idx = csr->pos;
+		tmp = *lchs;
+		idx = lcsr->pos;
 		while (idx-- && tmp)
 			tmp = tmp->next;
-		ft_chdelone(ch, tmp);
+		ft_chdelone(lchs, tmp);
 	}
 }
 
@@ -48,6 +51,14 @@ static void	fill_kcmps(t_tkeys *dest)
 	(dest->bsk)[1] = '\0';
 }
 
+void		suspend_hdl(int sigc)
+{
+	if (sigc != SIGCONT)
+		return ;
+	init_terminal();
+	print_with_csr(*lchs, lcsr);
+}
+
 void		chk_keys(t_choice **choices, t_cursor *csr)
 {
 	t_tkeys			kcmps;
@@ -55,6 +66,8 @@ void		chk_keys(t_choice **choices, t_cursor *csr)
 
 	if (!choices || !csr)
 		return ;
+	lchs = choices;
+	lcsr = csr;
 	fill_kcmps(&kcmps);
 	print_with_csr(*choices, csr);
 	ft_bzero(buff, sizeof(buff));
@@ -62,7 +75,7 @@ void		chk_keys(t_choice **choices, t_cursor *csr)
 	{
 		if (ft_strequ(buff, "\n"))
 			break ;
-		interact(buff, &kcmps, choices, csr);
+		interact(buff, &kcmps);
 		print_with_csr(*choices, csr);
 		ft_bzero(buff, sizeof(buff));
 	}

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 20:01:17 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/12 22:52:23 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ typedef struct	s_choice
 /*
 ** Set/Restore Terminal
 */
+
+void			suspend_hdl(int sigc);
 
 void			restore_terminal(void);
 int				init_terminal(void);

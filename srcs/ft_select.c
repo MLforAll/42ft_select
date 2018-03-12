@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 20:31:18 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/12 23:00:06 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int				main(int ac, char **av)
 		return (EXIT_FAILURE);
 	csr.pos = 0;
 	if (!init_terminal())
-		fatal(av[0], "error setting the terminal");
+		fatal(av[0], "Error setting the terminal");
 	chk_keys(&choices, &csr);
 	restore_terminal();
 	return_res(choices);

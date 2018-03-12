@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/09 20:27:14 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/12 22:59:05 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ void	clear_choices(size_t len)
 void	print_with_csr(t_choice *choices, t_cursor *csr)
 {
 	unsigned int	idx;
+	struct winsize	ws;
 
 	idx = 0;
+	ioctl(FT_OUT_FD, TIOCGWINSZ, &ws);
 	clear_choices(csr->max);
 	while (choices)
 	{
@@ -66,5 +68,6 @@ void	return_res(t_choice *choices)
 		}
 		choices = choices->next;
 	}
-	ft_putchar('\n');
+	if (!first)
+		ft_putchar('\n');
 }

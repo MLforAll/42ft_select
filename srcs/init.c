@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/13 00:39:32 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/13 21:16:34 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,9 @@ int						init_terminal(void)
 	sigc = 0;
 	while (sigc < 32)
 	{
-		signal(sigc, (sigc != SIGCONT) ? &signal_hdl : &suspend_hdl);
+		signal(sigc, (sigc != SIGCONT) ? &signal_hdl : &redraw_hdl);
 		sigc++;
 	}
+	signal(SIGWINCH, &redraw_hdl);
 	return (TRUE);
 }

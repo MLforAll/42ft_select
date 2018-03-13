@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/12 22:59:30 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/13 21:54:42 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,10 @@ static void	fill_kcmps(t_tkeys *dest)
 	(dest->bsk)[1] = '\0';
 }
 
-void		suspend_hdl(int sigc)
+void		redraw_hdl(int sigc)
 {
-	if (sigc != SIGCONT)
-		return ;
-	init_terminal();
+	if (sigc == SIGCONT)
+		init_terminal();
 	print_with_csr(*lchs, lcsr);
 }
 

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/12 22:52:23 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/13 21:44:12 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct	s_cursor
 {
 	unsigned long	pos;
 	size_t			max;
+	size_t			mlen;
 }				t_cursor;
 
 typedef struct	s_choice
@@ -42,12 +43,13 @@ typedef struct	s_choice
 }				t_choice;
 
 # define FT_OUT_FD	STDIN_FILENO
+# define FT_PAD_NB	2
 
 /*
 ** Set/Restore Terminal
 */
 
-void			suspend_hdl(int sigc);
+void			redraw_hdl(int sigc);
 
 void			restore_terminal(void);
 int				init_terminal(void);

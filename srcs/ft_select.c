@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/12 23:00:06 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/13 21:51:21 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@
 ** char**		arguments of prgm aka av + 1
 */
 
-static size_t	get_choices(t_choice **dest, char **args)
+static size_t	get_choices(t_choice **dest, t_cursor *csr, char **args)
 {
 	size_t		ret;
+	size_t		len;
 	t_choice	*new;
 
 	if (!dest)
@@ -31,6 +32,9 @@ static size_t	get_choices(t_choice **dest, char **args)
 	*dest = NULL;
 	while (*args)
 	{
+		len = ft_strlen(*args);
+		if (len > csr->mlen)
+			csr->mlen = len;
 		if (!(new = ft_chnew(*args, NO)))
 			return (0);
 		ft_chpush(dest, new);
@@ -72,9 +76,9 @@ int				main(int ac, char **av)
 		fatal(av[0], "TERM env var missing!");
 	if (tgetent(NULL, termtype) <= 0)
 		fatal(av[0], "Invalid terminal!");
-	if (ac == 1 || !(csr.max = get_choices(&choices, av + 1)))
+	ft_bzero(&csr, sizeof(t_cursor));
+	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
 		return (EXIT_FAILURE);
-	csr.pos = 0;
 	if (!init_terminal())
 		fatal(av[0], "Error setting the terminal");
 	chk_keys(&choices, &csr);

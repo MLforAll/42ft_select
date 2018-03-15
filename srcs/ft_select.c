@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/13 21:51:21 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/14 19:07:06 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int				main(int ac, char **av)
 	ft_bzero(&csr, sizeof(t_cursor));
 	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
 		return (EXIT_FAILURE);
+	set_window_prop(&csr);
 	if (!init_terminal())
 		fatal(av[0], "Error setting the terminal");
 	chk_keys(&choices, &csr);

@@ -6,25 +6,27 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/13 21:58:17 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/14 22:01:48 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
-#include <sys/ioctl.h>
 #include "ft_select.h"
 
-void		clear_choices(size_t len)
+void		clear_choices(t_cursor *csr)
 {
 	const char		*cmstr = tgetstr("cm", NULL);
-	const char		*gotostr = tgoto(cmstr, 0, len);
+	char			*gotostr;
+	size_t			len;
 
+	len = csr->nlines;
+	gotostr = tgoto(cmstr, 0, len);
 	tputs(gotostr, 1, &putcf);
 	while (len--)
 	{
-		outcap("ce");
 		outcap("up");
+		outcap("ce");
 	}
 }
 
@@ -47,22 +49,16 @@ static void print_padding(t_choice *ch, t_cursor *csr)
 void		print_with_csr(t_choice *choices, t_cursor *csr)
 {
 	unsigned int	idx;
-	struct winsize	ws;
-	size_t			ncols;
-	size_t			nlines;
+	unsigned int	cline;
 	unsigned int	ccol;
 
 	idx = 0;
-	ioctl(FT_OUT_FD, TIOCGWINSZ, &ws);
-	ncols = ws.ws_col / csr->mlen;
-	if (csr->max < ws.ws_row)
-		ncols = 1;
-	nlines = csr->max / ncols;
-	clear_choices(csr->max);
-	while (nlines--)
+	cline = 0;
+	clear_choices(csr);
+	while (cline < csr->nlines)
 	{
 		ccol = 0;
-		while (ccol < ncols)
+		while (ccol < csr->ncols)
 		{
 			if (ccol > 0)
 				print_padding(choices->prev, csr);
@@ -78,6 +74,7 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 			idx++;
 			ccol++;
 		}
+		cline++;
 		ft_putstr_fd("\n\r", FT_OUT_FD);
 	}
 }

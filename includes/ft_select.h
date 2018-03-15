@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/13 21:44:12 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/14 18:18:19 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ typedef struct	s_cursor
 	unsigned long	pos;
 	size_t			max;
 	size_t			mlen;
+	size_t			nlines;
+	size_t			ncols;
 }				t_cursor;
 
 typedef struct	s_choice
@@ -51,6 +53,7 @@ typedef struct	s_choice
 
 void			redraw_hdl(int sigc);
 
+void			set_window_prop(t_cursor *dest);
 void			restore_terminal(void);
 int				init_terminal(void);
 
@@ -59,7 +62,7 @@ int				init_terminal(void);
 */
 
 void			return_res(t_choice *res);
-void			clear_choices(size_t len);
+void			clear_choices(t_cursor *csr);
 void			print_with_csr(t_choice *choices, t_cursor *csr);
 void			chk_keys(t_choice **choices, t_cursor *csr);
 

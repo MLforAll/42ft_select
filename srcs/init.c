@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/13 21:16:34 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/14 22:00:50 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,20 @@
 #include "ft_select.h"
 
 static struct termios	saved_t;
+
+void					set_window_prop(t_cursor *dest)
+{
+	struct winsize	ws;
+
+	ioctl(FT_OUT_FD, TIOCGWINSZ, &ws);
+	if (dest->max < ws.ws_row || dest->mlen <= 0)
+		dest->ncols = 1;
+	else
+		dest->ncols = ws.ws_col / (dest->mlen + FT_PAD_NB);
+	if (dest->ncols <= 0)
+		dest->ncols = 1;
+	dest->nlines = dest->max / dest->ncols;
+}
 
 void					restore_terminal(void)
 {
@@ -61,7 +75,8 @@ int						init_terminal(void)
 	sigc = 0;
 	while (sigc < 32)
 	{
-		signal(sigc, (sigc != SIGCONT) ? &signal_hdl : &redraw_hdl);
+		if (sigc != 11)
+			signal(sigc, (sigc != SIGCONT) ? &signal_hdl : &redraw_hdl);
 		sigc++;
 	}
 	signal(SIGWINCH, &redraw_hdl);

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/14 19:07:06 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/15 21:07:27 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 static size_t	get_choices(t_choice **dest, t_cursor *csr, char **args)
 {
 	size_t		ret;
-	size_t		len;
 	t_choice	*new;
 
 	if (!dest)
@@ -32,16 +31,42 @@ static size_t	get_choices(t_choice **dest, t_cursor *csr, char **args)
 	*dest = NULL;
 	while (*args)
 	{
-		len = ft_strlen(*args);
-		if (len > csr->mlen)
-			csr->mlen = len;
 		if (!(new = ft_chnew(*args, NO)))
 			return (0);
+		if (new->titlelen > csr->mlen)
+			csr->mlen = new->titlelen;
 		ft_chpush(dest, new);
 		args++;
 		ret++;
 	}
 	return (ret);
+}
+
+/*
+** return_res
+**
+** t_choice*	all choices (arguments)
+*/
+
+static void		return_res(t_choice *choices)
+{
+	int				first;
+
+	first = YES;
+	while (choices)
+	{
+		if (choices->selected)
+		{
+			if (!first)
+				ft_putchar(' ');
+			else
+				first = NO;
+			ft_putstr(choices->title);
+		}
+		choices = choices->next;
+	}
+	if (!first)
+		ft_putchar('\n');
 }
 
 /*
@@ -68,23 +93,27 @@ static void		fatal(const char *app, const char *err)
 
 int				main(int ac, char **av)
 {
+	const char	*app_name = av[0];
 	t_choice	*choices;
 	t_cursor	csr;
 	char		*termtype;
 
 	if (!(termtype = getenv("TERM")))
-		fatal(av[0], "TERM env var missing!");
+		fatal(app_name, "TERM env var missing");
 	if (tgetent(NULL, termtype) <= 0)
-		fatal(av[0], "Invalid terminal!");
+		fatal(app_name, "Invalid terminal");
+	if (!ft_isatty(FT_OUT_FD))
+		fatal(app_name, "Invalid output fd");
 	ft_bzero(&csr, sizeof(t_cursor));
 	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
 		return (EXIT_FAILURE);
 	set_window_prop(&csr);
 	if (!init_terminal())
-		fatal(av[0], "Error setting the terminal");
+		fatal(app_name, "Error setting the terminal");
 	chk_keys(&choices, &csr);
 	restore_terminal();
-	return_res(choices);
+	if (!ft_isatty(STDOUT_FILENO))
+		return_res(choices);
 	ft_chdel(&choices);
 	return (EXIT_SUCCESS);
 }

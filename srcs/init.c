@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/14 22:00:50 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/15 23:15:28 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,29 @@
 
 static struct termios	saved_t;
 
+/*
+** set_window_prop
+**
+** t_cursor*	destination struct
+*/
+
 void					set_window_prop(t_cursor *dest)
 {
-	struct winsize	ws;
-
-	ioctl(FT_OUT_FD, TIOCGWINSZ, &ws);
-	if (dest->max < ws.ws_row || dest->mlen <= 0)
+	ft_bzero(&dest->ws, sizeof(struct winsize));
+	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
+	if (dest->max < dest->ws.ws_row || dest->mlen > dest->ws.ws_col
+		|| dest->mlen <= 0)
 		dest->ncols = 1;
 	else
-		dest->ncols = ws.ws_col / (dest->mlen + FT_PAD_NB);
+		dest->ncols = dest->ws.ws_col / (dest->mlen + FT_PAD_NB);
 	if (dest->ncols <= 0)
 		dest->ncols = 1;
-	dest->nlines = dest->max / dest->ncols;
+	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
 }
+
+/*
+** restore_terminal
+*/
 
 void					restore_terminal(void)
 {
@@ -39,6 +49,12 @@ void					restore_terminal(void)
 	outcap("te");
 	tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t);
 }
+
+/*
+** signal_hdl -- handle signals (except SIGCONT and SIGWINCH)
+**
+** int			signal code
+*/
 
 static void				signal_hdl(int sigc)
 {
@@ -54,6 +70,10 @@ static void				signal_hdl(int sigc)
 	exit(EXIT_SUCCESS);
 }
 
+/*
+** init_terminal
+*/
+
 int						init_terminal(void)
 {
 	struct termios	t;
@@ -66,8 +86,8 @@ int						init_terminal(void)
 	t = saved_t;
 	t.c_lflag &= ~(ICANON | ECHO);
 	t.c_oflag &= ~OPOST;
-	t.c_cc[VMIN] = 1;
-	t.c_cc[VTIME] = 0;
+	t.c_cc[VMIN] = 0;
+	t.c_cc[VTIME] = 2;
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)
 		return (FALSE);
 	if (!(success += outcap("ti") + outcap("ks") + outcap("vi")))

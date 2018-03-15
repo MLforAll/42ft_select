@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/08 21:48:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/14 18:17:27 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/15 22:38:11 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,18 @@ t_choice	*ft_chnew(char *title, int selected)
 
 	if (!(ret = (t_choice*)malloc(sizeof(t_choice))))
 		return (NULL);
-	if (title && !(ret->title = ft_strdup(title)))
+	ft_bzero(ret, sizeof(t_choice));
+	if (title)
 	{
-		free(ret);
-		return (NULL);
+		ret->titlelen = ft_strlen(title);
+		if (!(ret->title = (char*)malloc(sizeof(char) * (ret->titlelen + 1))))
+		{
+			free(ret);
+			return (NULL);
+		}
+		ft_strcpy(ret->title, title);
 	}
 	ret->selected = selected;
-	ret->next = NULL;
-	ret->prev = NULL;
 	return (ret);
 }
 

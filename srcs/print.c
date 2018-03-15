@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/14 22:01:48 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/15 23:16:40 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void		clear_choices(t_cursor *csr)
 	char			*gotostr;
 	size_t			len;
 
-	len = csr->nlines;
+	len = (csr->nlines > csr->ws.ws_row) ? csr->ws.ws_row : csr->nlines;
 	gotostr = tgoto(cmstr, 0, len);
 	tputs(gotostr, 1, &putcf);
 	while (len--)
@@ -30,20 +30,40 @@ void		clear_choices(t_cursor *csr)
 	}
 }
 
-static void print_padding(t_choice *ch, t_cursor *csr)
+static void	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
 {
 	char	*buff;
 	size_t	padlen;
+	size_t	len;
+	unsigned int	off;
+	int				scroll;
 
-	if (!ch || !ch->title)
-		padlen = FT_PAD_NB;
-	else
-		padlen = csr->mlen - ft_strlen(ch->title) + FT_PAD_NB;
-	if (!(buff = ft_strnew(padlen)))
+	if (!ch || !csr)
 		return ;
-	ft_memset(buff, ' ', padlen);
-	ft_putstr_fd(buff, FT_OUT_FD);
-	free(buff);
+	if (ccol > 0)
+	{
+		if (!ch->prev || !ch->prev->title)
+			padlen = FT_PAD_NB;
+		else
+			padlen = csr->mlen - ch->prev->titlelen + FT_PAD_NB;
+		if (!(buff = ft_strnew(padlen)))
+			return ;
+		ft_memset(buff, ' ', padlen);
+		ft_putstr_fd(buff, FT_OUT_FD);
+		free(buff);
+	}
+	if (csr->pos == idx)
+		outcap("us");
+	if (ch->selected)
+		outcap("mr");
+	scroll = (csr->pos == idx && ch->titlelen > csr->ws.ws_col);
+	len = (ch->titlelen > csr->ws.ws_col) ? csr->ws.ws_col : ch->titlelen;
+	off = (scroll) ? csr->scroll_off : 0;
+	write(FT_OUT_FD, ch->title + off, (off + len > ch->titlelen) ? ch->titlelen - off : len);
+	if (scroll)
+		csr->scroll_off = csr->scroll_off + 1 > ch->titlelen ? 0 : csr->scroll_off + 1;
+	if (ch->selected || csr->pos == idx)
+		outcap("me");
 }
 
 void		print_with_csr(t_choice *choices, t_cursor *csr)
@@ -54,22 +74,18 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 
 	idx = 0;
 	cline = 0;
-	clear_choices(csr);
-	while (cline < csr->nlines)
+	if (csr->nlines > csr->ws.ws_row)
+	{
+		ft_putstr_fd("Too small goddamnit\n\r", STDIN_FILENO);
+		return ;
+	}
+	while (choices && cline < csr->nlines)
 	{
 		ccol = 0;
 		while (ccol < csr->ncols)
 		{
-			if (ccol > 0)
-				print_padding(choices->prev, csr);
-			if (csr->pos == idx)
-				outcap("us");
-			if (choices->selected)
-				outcap("mr");
-			ft_putstr_fd(choices->title, FT_OUT_FD);
-			if (choices->selected || csr->pos == idx)
-				outcap("me");
-			if (!(choices = choices->next))
+			print_elem(choices, csr, ccol, idx);
+			if (!choices || !(choices = choices->next))
 				break ;
 			idx++;
 			ccol++;
@@ -77,25 +93,4 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 		cline++;
 		ft_putstr_fd("\n\r", FT_OUT_FD);
 	}
-}
-
-void		return_res(t_choice *choices)
-{
-	int				first;
-
-	first = YES;
-	while (choices)
-	{
-		if (choices->selected)
-		{
-			if (!first)
-				ft_putchar(' ');
-			else
-				first = NO;
-			ft_putstr(choices->title);
-		}
-		choices = choices->next;
-	}
-	if (!first)
-		ft_putchar('\n');
 }

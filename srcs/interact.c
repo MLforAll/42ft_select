@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/14 22:03:27 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/15 23:17:26 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,33 @@
 #include <stdlib.h>
 #include "ft_select.h"
 
-static t_choice	**lchs;
-static t_cursor	*lcsr;
+static t_choice	**g_chs;
+static t_cursor	*g_csr;
 
-static int	interact(char *buff, t_tkeys *kcmps)
+static int	interact(char *buff, t_tkeys *kcmps, t_cursor *csr)
 {
 	t_choice		*tmp;
 	unsigned int	idx;
 
-	if (!lchs || !kcmps)
+	if (!g_chs || !kcmps)
 		return (FALSE);
+	csr->scroll_off = 0;
 	if (ft_strequ(buff, kcmps->upk))
-		lcsr->pos = (lcsr->pos > 0) ? lcsr->pos - 1 : lcsr->max - 1;
+		csr->pos = (csr->pos > 0) ? csr->pos - 1 : csr->max - 1;
 	else if (ft_strequ(buff, kcmps->downk))
-		lcsr->pos = (lcsr->pos < lcsr->max - 1) ? lcsr->pos + 1 : 0;
+		csr->pos = (csr->pos < csr->max - 1) ? csr->pos + 1 : 0;
 	else if (ft_strequ(buff, " "))
 	{
-		switch_selected(*lchs, lcsr->pos);
-		lcsr->pos = (lcsr->pos < lcsr->max - 1) ? lcsr->pos + 1 : 0;
+		switch_selected(*g_chs, csr->pos);
+		csr->pos = (csr->pos < csr->max - 1) ? csr->pos + 1 : 0;
 	}
 	else if (ft_strequ(buff, kcmps->delk) || ft_strequ(buff, kcmps->bsk))
 	{
-		tmp = *lchs;
-		idx = lcsr->pos;
+		tmp = *g_chs;
+		idx = csr->pos;
 		while (idx-- && tmp)
 			tmp = tmp->next;
-		ft_chdelone(lchs, tmp);
+		ft_chdelone(g_chs, tmp);
 	}
 	else
 		return (FALSE);
@@ -62,29 +63,34 @@ void		redraw_hdl(int sigc)
 	if (sigc == SIGCONT)
 		init_terminal();
 	else
-		clear_choices(lcsr);
-	set_window_prop(lcsr);
-	print_with_csr(*lchs, lcsr);
+		outcap("cl");
+	set_window_prop(g_csr);
+	print_with_csr(*g_chs, g_csr);
 }
 
 void		chk_keys(t_choice **choices, t_cursor *csr)
 {
 	t_tkeys			kcmps;
 	char			buff[5];
+	ssize_t			rb;
 
 	if (!choices || !csr)
 		return ;
-	lchs = choices;
-	lcsr = csr;
+	g_chs = choices;
+	g_csr = csr;
 	fill_kcmps(&kcmps);
 	print_with_csr(*choices, csr);
 	ft_bzero(buff, sizeof(buff));
-	while (read(FT_OUT_FD, buff, 4) > 0)
+	while ((rb = read(FT_OUT_FD, buff, 4)) != -1)
 	{
-		if (ft_strequ(buff, "\n"))
+		if (rb > 0 && ft_strequ(buff, "\n"))
 			break ;
-		if (interact(buff, &kcmps))
+		if (rb == 0 || interact(buff, &kcmps, csr))
+		{
+			clear_choices(csr);
 			print_with_csr(*choices, csr);
-		ft_bzero(buff, sizeof(buff));
+		}
+		if (rb > 0)
+			ft_bzero(buff, sizeof(buff));
 	}
 }

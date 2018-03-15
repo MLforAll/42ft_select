@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/14 18:18:19 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/15 23:11:06 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,17 @@ typedef struct	s_cursor
 	unsigned long	pos;
 	size_t			max;
 	size_t			mlen;
+	struct winsize	ws;
 	size_t			nlines;
 	size_t			ncols;
+	unsigned int	scroll_off;
 }				t_cursor;
 
 typedef struct	s_choice
 {
 	int				selected;
 	char			*title;
+	size_t			titlelen;
 	struct s_choice	*next;
 	struct s_choice	*prev;
 }				t_choice;
@@ -58,12 +61,16 @@ void			restore_terminal(void);
 int				init_terminal(void);
 
 /*
-** stuff
+** printing
 */
 
-void			return_res(t_choice *res);
 void			clear_choices(t_cursor *csr);
 void			print_with_csr(t_choice *choices, t_cursor *csr);
+
+/*
+** interaction
+*/
+
 void			chk_keys(t_choice **choices, t_cursor *csr);
 
 /*

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/15 23:16:40 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/16 02:42:55 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ void		clear_choices(t_cursor *csr)
 
 static void	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
 {
-	char	*buff;
-	size_t	padlen;
-	size_t	len;
+	char			*buff;
+	size_t			padlen;
+	size_t			len;
 	unsigned int	off;
 	int				scroll;
 
@@ -74,10 +74,11 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 
 	idx = 0;
 	cline = 0;
-	if (csr->nlines > csr->ws.ws_row)
+	unsigned int	next = csr->vscroll;
+	while (choices && next--)
 	{
-		ft_putstr_fd("Too small goddamnit\n\r", STDIN_FILENO);
-		return ;
+		choices = choices->next;
+		idx++;
 	}
 	while (choices && cline < csr->nlines)
 	{

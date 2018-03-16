@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/15 22:41:03 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/16 03:17:08 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,22 @@
 #include "ft_select.h"
 
 /*
-** ft_lstdef -- del a chain with str as data
+** ft_strasciieq
 **
-** void*		data of chain
-** size_t		size of data of chain (ign)
+** char*	string
+** int		char
 */
 
-void	ft_lstdelf(void *dat, size_t datsize)
+int		ft_strasciieq(char *s, char c)
 {
-	(void)datsize;
-	free(dat);
+	if (!s || *s != c)
+		return (FALSE);
+	while (*(++s))
+	{
+		if (*s != 0)
+			return (FALSE);
+	}
+	return (TRUE);
 }
 
 /*

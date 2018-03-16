@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/15 21:07:27 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/16 03:23:41 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ int				main(int ac, char **av)
 	t_choice	*choices;
 	t_cursor	csr;
 	char		*termtype;
+	int			show_res;
 
 	if (!(termtype = getenv("TERM")))
 		fatal(app_name, "TERM env var missing");
@@ -110,9 +111,9 @@ int				main(int ac, char **av)
 	set_window_prop(&csr);
 	if (!init_terminal())
 		fatal(app_name, "Error setting the terminal");
-	chk_keys(&choices, &csr);
+	show_res = chk_keys(&choices, &csr);
 	restore_terminal();
-	if (!ft_isatty(STDOUT_FILENO))
+	if (show_res && !ft_isatty(STDOUT_FILENO))
 		return_res(choices);
 	ft_chdel(&choices);
 	return (EXIT_SUCCESS);

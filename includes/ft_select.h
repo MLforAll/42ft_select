@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/15 23:11:06 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/16 03:20:31 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct	s_cursor
 	struct winsize	ws;
 	size_t			nlines;
 	size_t			ncols;
+	unsigned int	vscroll;
 	unsigned int	scroll_off;
 }				t_cursor;
 
@@ -71,7 +72,7 @@ void			print_with_csr(t_choice *choices, t_cursor *csr);
 ** interaction
 */
 
-void			chk_keys(t_choice **choices, t_cursor *csr);
+int				chk_keys(t_choice **choices, t_cursor *csr);
 
 /*
 ** stuff
@@ -87,9 +88,9 @@ void			switch_selected(t_choice *head, unsigned int idx);
 ** Misc/Utilities
 */
 
+int				ft_strasciieq(char *s, char c);
 int				putcf(int c);
 int				outcap_arg(char *name, int affcnt);
 int				outcap(char *name);
-void			ft_lstdelf(void *dat, size_t datsize);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/08 21:48:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/15 22:38:11 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/16 03:44:11 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void		ft_chdelone(t_choice **headref, t_choice *ch)
 {
 	t_choice	*bw;
 
-	if (!headref)
+	if (!headref || !ch)
 		return ;
 	bw = *headref;
 	if (ch->prev)
@@ -64,9 +64,11 @@ void		ft_chdelone(t_choice **headref, t_choice *ch)
 	else
 	{
 		*headref = ch->next;
-		ft_strdel(&ch->title);
-		free(ch);
+		if (*headref)
+			(*headref)->prev = NULL;
 	}
+	ft_strdel(&ch->title);
+	free(ch);
 }
 
 void		ft_chdel(t_choice **headref)

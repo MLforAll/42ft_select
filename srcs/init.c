@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/15 23:15:28 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/16 03:19:30 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void					set_window_prop(t_cursor *dest)
 	if (dest->ncols <= 0)
 		dest->ncols = 1;
 	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
+	if (dest->nlines > dest->ws.ws_row)
+		dest->nlines = dest->ws.ws_row - 1;
 }
 
 /*

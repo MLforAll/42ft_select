@@ -6,7 +6,7 @@
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/20 21:41:19 by kdumarai          #+#    #+#              #
-#    Updated: 2018/03/09 19:36:17 by kdumarai         ###   ########.fr        #
+#    Updated: 2018/03/16 21:50:46 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ INCLUDES = $(addprefix $(INCDIR)/, $(INCFILES))
 SRCDIR = srcs
 SRCFILES = ft_select.c \
 		   interact.c \
+		   navigation.c \
 		   print.c \
 		   init.c \
 		   chlst.c \

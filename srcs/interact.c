@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 19:58:17 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 20:35:16 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ static void	delete_curr_elem(t_choice **ch, t_cursor *csr)
 		csr->pos--;
 		csr->max--;
 	}
+	set_window_prop(csr);
 }
 
 static void	select_curr_elem(t_choice **ch, t_cursor *csr)

@@ -6,12 +6,13 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/16 02:42:55 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 04:02:15 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include "ft_select.h"
 
 void		clear_choices(t_cursor *csr)
@@ -30,28 +31,32 @@ void		clear_choices(t_cursor *csr)
 	}
 }
 
-static void	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
+static void	print_padding(t_choice *ch, t_cursor *csr)
 {
-	char			*buff;
+	char			*padbuff;
 	size_t			padlen;
+
+	if (!ch->prev || !ch->prev->title)
+		padlen = FT_PAD_NB;
+	else
+		padlen = csr->mlen - ch->prev->titlelen + FT_PAD_NB;
+	if (!(padbuff = ft_strnew(padlen)))
+		return ;
+	ft_memset(padbuff, ' ', padlen);
+	ft_putstr_fd(padbuff, FT_OUT_FD);
+	free(padbuff);
+}
+
+static int	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
+{
 	size_t			len;
 	unsigned int	off;
 	int				scroll;
 
 	if (!ch || !csr)
-		return ;
+		return (FALSE);
 	if (ccol > 0)
-	{
-		if (!ch->prev || !ch->prev->title)
-			padlen = FT_PAD_NB;
-		else
-			padlen = csr->mlen - ch->prev->titlelen + FT_PAD_NB;
-		if (!(buff = ft_strnew(padlen)))
-			return ;
-		ft_memset(buff, ' ', padlen);
-		ft_putstr_fd(buff, FT_OUT_FD);
-		free(buff);
-	}
+		print_padding(ch, csr);
 	if (csr->pos == idx)
 		outcap("us");
 	if (ch->selected)
@@ -64,6 +69,7 @@ static void	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
 		csr->scroll_off = csr->scroll_off + 1 > ch->titlelen ? 0 : csr->scroll_off + 1;
 	if (ch->selected || csr->pos == idx)
 		outcap("me");
+	return (scroll);
 }
 
 void		print_with_csr(t_choice *choices, t_cursor *csr)
@@ -71,27 +77,48 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 	unsigned int	idx;
 	unsigned int	cline;
 	unsigned int	ccol;
+	int				scroll_sw;
 
-	idx = 0;
+	idx = csr->vscroll;
 	cline = 0;
-	unsigned int	next = csr->vscroll;
-	while (choices && next--)
-	{
-		choices = choices->next;
-		idx++;
-	}
+	if (idx > 0)
+		choices = ft_chgetidx(choices, idx);
+	scroll_sw = FALSE;
 	while (choices && cline < csr->nlines)
 	{
 		ccol = 0;
-		while (ccol < csr->ncols)
+		while (choices && ccol < csr->ncols)
 		{
-			print_elem(choices, csr, ccol, idx);
-			if (!choices || !(choices = choices->next))
-				break ;
+			if (print_elem(choices, csr, ccol, idx))
+				scroll_sw = TRUE;
+			choices = choices->next;
 			idx++;
 			ccol++;
 		}
 		cline++;
 		ft_putstr_fd("\n\r", FT_OUT_FD);
 	}
+	set_read_timeout((scroll_sw) ? 2 : 0, NULL);
+}
+
+/*
+** set_window_prop
+**
+** t_cursor*	destination struct
+*/
+
+void					set_window_prop(t_cursor *dest)
+{
+	ft_bzero(&dest->ws, sizeof(struct winsize));
+	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
+	if (dest->max < dest->ws.ws_row || dest->mlen > dest->ws.ws_col
+		|| dest->mlen <= 0)
+		dest->ncols = 1;
+	else
+		dest->ncols = dest->ws.ws_col / (dest->mlen + FT_PAD_NB);
+	if (dest->ncols <= 0)
+		dest->ncols = 1;
+	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
+	if (dest->nlines > dest->ws.ws_row)
+		dest->nlines = dest->ws.ws_row - 1;
 }

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/16 03:19:30 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 04:02:22 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,21 @@
 static struct termios	saved_t;
 
 /*
-** set_window_prop
+** fill_kcmps
 **
-** t_cursor*	destination struct
+** t_tkeys*		struct containing term movkeys caps
 */
 
-void					set_window_prop(t_cursor *dest)
+int						fill_kcmps(t_tkeys *dest)
 {
-	ft_bzero(&dest->ws, sizeof(struct winsize));
-	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
-	if (dest->max < dest->ws.ws_row || dest->mlen > dest->ws.ws_col
-		|| dest->mlen <= 0)
-		dest->ncols = 1;
-	else
-		dest->ncols = dest->ws.ws_col / (dest->mlen + FT_PAD_NB);
-	if (dest->ncols <= 0)
-		dest->ncols = 1;
-	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
-	if (dest->nlines > dest->ws.ws_row)
-		dest->nlines = dest->ws.ws_row - 1;
+	dest->rightk = tgetstr("kr", NULL);
+	dest->upk = tgetstr("ku", NULL);
+	dest->downk = tgetstr("kd", NULL);
+	dest->leftk = tgetstr("kl", NULL);
+	dest->delk = tgetstr("kD", NULL);
+	(dest->bsk)[0] = 127;
+	(dest->bsk)[1] = '\0';
+	return (TRUE);
 }
 
 /*
@@ -73,6 +69,34 @@ static void				signal_hdl(int sigc)
 }
 
 /*
+** set_read_timeout
+**
+** cc_t				timeout
+** struct termios*	existing dump termios struct
+**						(will NOT apply changes if provided)
+*/
+
+int						set_read_timeout(cc_t timeout, struct termios *tptr)
+{
+	struct termios	t;
+	struct termios	*dest;
+
+	if (!tptr)
+	{
+		if (tcgetattr(FT_OUT_FD, &t) == -1)
+			return (FALSE);
+		dest = &t;
+	}
+	else
+		dest = tptr;
+	dest->c_cc[VMIN] = (timeout == 0) ? 1 : 0;
+	dest->c_cc[VTIME] = timeout;
+	if (!tptr && tcsetattr(FT_OUT_FD, TCSADRAIN, dest) == -1)
+		return (FALSE);
+	return (TRUE);
+}
+
+/*
 ** init_terminal
 */
 
@@ -88,8 +112,7 @@ int						init_terminal(void)
 	t = saved_t;
 	t.c_lflag &= ~(ICANON | ECHO);
 	t.c_oflag &= ~OPOST;
-	t.c_cc[VMIN] = 0;
-	t.c_cc[VTIME] = 2;
+	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)
 		return (FALSE);
 	if (!(success += outcap("ti") + outcap("ks") + outcap("vi")))

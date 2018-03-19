@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/08 21:48:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/16 03:44:11 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 03:40:58 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,9 @@ void		ft_chdel(t_choice **headref)
 	*headref = NULL;
 }
 
-void		switch_selected(t_choice *head, unsigned int idx)
+t_choice	*ft_chgetidx(t_choice *head, unsigned int idx)
 {
-	if (!head)
-		return ;
-	while (idx-- && head)
+	while (head && idx--)
 		head = head->next;
-	head->selected = !head->selected;
+	return (head);
 }

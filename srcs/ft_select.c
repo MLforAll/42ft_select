@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/16 04:59:31 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 03:27:49 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ int				main(int ac, char **av)
 	const char	*app_name = av[0];
 	t_choice	*choices;
 	t_cursor	csr;
+	t_tkeys		kcmps;
 	char		*termtype;
 	int			show_res;
 
@@ -109,9 +110,9 @@ int				main(int ac, char **av)
 	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
 		return (EXIT_FAILURE);
 	set_window_prop(&csr);
-	if (!init_terminal())
+	if (!fill_kcmps(&kcmps) || !init_terminal())
 		fatal(app_name, "Error setting the terminal");
-	show_res = chk_keys(&choices, &csr);
+	show_res = chk_keys(&choices, &csr, &kcmps);
 	restore_terminal();
 	if (show_res && !ft_isatty(STDOUT_FILENO))
 		return_res(choices);

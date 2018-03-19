@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/16 21:51:28 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 04:06:12 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,67 +17,57 @@
 static t_choice	**g_chs;
 static t_cursor	*g_csr;
 
-static void	chk_vscroll(t_cursor *csr, unsigned int oldpos)
-{
-	if (csr->nlines != csr->ws.ws_row - 1)
-		return ;
-	if (csr->pos % (csr->nlines * csr->ncols) == 0 && csr->pos > 0
-		&& oldpos < csr->pos)
-		csr->vscroll += csr->nlines * csr->ncols;
-	else if ((csr->pos + 1) % (csr->nlines * csr->ncols) == 0 && csr->pos > 0
-		&& oldpos > csr->pos)
-		csr->vscroll -= csr->nlines * csr->ncols;
-	else if (csr->pos == 0)
-		csr->vscroll = 0;
-	else if (csr->pos == csr->max - 1)
-		csr->vscroll = csr->nlines * csr->ncols \
-					* (csr->max / (csr->nlines * csr->ncols));
-}
-
-static int	interact(char *buff, t_tkeys *kcmps, t_cursor *csr)
+static void	delete_curr_elem(t_choice **ch, t_cursor *csr)
 {
 	t_choice		*tmp;
-	unsigned int	idx;
-	unsigned int	oldpos;
 
-	if (!g_chs || !kcmps)
-		return (FALSE);
-	csr->scroll_off = 0;
-	oldpos = csr->pos;
-	if (ft_strequ(buff, kcmps->upk))
-		csr->pos = (csr->pos > 0) ? csr->pos - 1 : csr->max - 1;
-	else if (ft_strequ(buff, kcmps->downk))
-		csr->pos = (csr->pos < csr->max - 1) ? csr->pos + 1 : 0;
-	else if (ft_strequ(buff, " "))
+	if (!ch || !csr)
+		return ;
+	if (!(tmp = ft_chgetidx(*ch, csr->pos)))
+		return ;
+	ft_chdelone(ch, tmp);
+	if (csr->pos > 0)
 	{
-		switch_selected(*g_chs, csr->pos);
-		csr->pos = (csr->pos < csr->max - 1) ? csr->pos + 1 : 0;
+		csr->pos--;
+		csr->max--;
 	}
-	else if (ft_strequ(buff, kcmps->delk) || ft_strequ(buff, kcmps->bsk))
-	{
-		tmp = *g_chs;
-		idx = csr->pos;
-		while (idx-- && tmp)
-			tmp = tmp->next;
-		ft_chdelone(g_chs, tmp);
-		if (csr->pos > 0)
-			csr->pos--;
-	}
-	else
-		return (FALSE);
-	chk_vscroll(csr, oldpos);
-	return (TRUE);
 }
 
-static void	fill_kcmps(t_tkeys *dest)
+static void	select_curr_elem(t_choice **ch, t_cursor *csr)
 {
-	dest->rightk = tgetstr("kr", NULL);
-	dest->upk = tgetstr("ku", NULL);
-	dest->downk = tgetstr("kd", NULL);
-	dest->leftk = tgetstr("kl", NULL);
-	dest->delk = tgetstr("kD", NULL);
-	(dest->bsk)[0] = 127;
-	(dest->bsk)[1] = '\0';
+	t_choice		*bw;
+
+	if (!ch || !csr)
+		return ;
+	if (!(bw = ft_chgetidx(*ch, csr->pos)))
+		return ;
+	bw->selected = !bw->selected;
+	mov_down(ch, csr);
+}
+
+static int	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
+{
+	const char		*kbuffs[] = {kcmps->upk, kcmps->downk, " ",
+								kcmps->delk, kcmps->bsk, NULL};
+	static void		(*kfuncs[])(t_choice **, t_cursor *) = {&mov_up, 
+								&mov_down, &select_curr_elem,
+								&delete_curr_elem, &delete_curr_elem, NULL};
+	unsigned int	idx;
+
+	if (!ch || !kcmps)
+		return (FALSE);
+	csr->scroll_off = 0;
+	idx = 0;
+	while (kbuffs[idx])
+	{
+		if (ft_strequ(buff, kbuffs[idx]))
+		{
+			(kfuncs[idx])(ch, csr);
+			return (TRUE);
+		}
+		idx++;
+	}
+	return (FALSE);
 }
 
 void		redraw_hdl(int sigc)
@@ -90,9 +80,8 @@ void		redraw_hdl(int sigc)
 	print_with_csr(*g_chs, g_csr);
 }
 
-int			chk_keys(t_choice **choices, t_cursor *csr)
+int			chk_keys(t_choice **choices, t_cursor *csr, t_tkeys *kcmps)
 {
-	t_tkeys			kcmps;
 	char			buff[5];
 	ssize_t			rb;
 
@@ -100,7 +89,6 @@ int			chk_keys(t_choice **choices, t_cursor *csr)
 		return (FALSE);
 	g_chs = choices;
 	g_csr = csr;
-	fill_kcmps(&kcmps);
 	print_with_csr(*choices, csr);
 	ft_bzero(buff, sizeof(buff));
 	while ((rb = read(FT_OUT_FD, buff, 4)) != -1)
@@ -109,7 +97,7 @@ int			chk_keys(t_choice **choices, t_cursor *csr)
 			break ;
 		if ((rb > 0 && ft_strasciieq(buff, 27)) || !*choices)
 			return (FALSE);
-		if (rb == 0 || interact(buff, &kcmps, csr))
+		if (rb == 0 || interact(buff, kcmps, choices, csr))
 		{
 			clear_choices(csr);
 			print_with_csr(*choices, csr);

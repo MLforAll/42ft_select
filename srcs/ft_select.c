@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 03:27:49 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 20:26:16 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,25 +93,24 @@ static void		fatal(const char *app, const char *err)
 
 int				main(int ac, char **av)
 {
-	const char	*app_name = av[0];
+	char		*termtype;
 	t_choice	*choices;
 	t_cursor	csr;
 	t_tkeys		kcmps;
-	char		*termtype;
 	int			show_res;
 
 	if (!(termtype = getenv("TERM")))
-		fatal(app_name, "TERM env var missing");
+		fatal(av[0], "TERM env var missing");
 	if (tgetent(NULL, termtype) <= 0)
-		fatal(app_name, "Invalid terminal");
+		fatal(av[0], "Invalid terminal");
 	if (!ft_isatty(FT_OUT_FD))
-		fatal(app_name, "Invalid output fd");
+		fatal(av[0], "Invalid output fd");
 	ft_bzero(&csr, sizeof(t_cursor));
 	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
 		return (EXIT_FAILURE);
 	set_window_prop(&csr);
 	if (!fill_kcmps(&kcmps) || !init_terminal())
-		fatal(app_name, "Error setting the terminal");
+		fatal(av[0], "Error setting the terminal");
 	show_res = chk_keys(&choices, &csr, &kcmps);
 	restore_terminal();
 	if (show_res && !ft_isatty(STDOUT_FILENO))

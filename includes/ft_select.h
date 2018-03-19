@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 03:54:23 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 19:57:44 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ int				init_terminal(void);
 */
 
 void			clear_choices(t_cursor *csr);
+void			erase_curr_line(t_cursor *csr);
 void			print_with_csr(t_choice *choices, t_cursor *csr);
 void			set_window_prop(t_cursor *dest);
 
@@ -97,5 +98,6 @@ int				ft_strasciieq(char *s, char c);
 int				putcf(int c);
 int				outcap_arg(char *name, int affcnt);
 int				outcap(char *name);
+int				movcap(unsigned int x, unsigned int y);
 
 #endif

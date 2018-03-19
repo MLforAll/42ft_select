@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 04:06:12 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 19:58:17 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,21 @@ static void	select_curr_elem(t_choice **ch, t_cursor *csr)
 	if (!(bw = ft_chgetidx(*ch, csr->pos)))
 		return ;
 	bw->selected = !bw->selected;
-	mov_down(ch, csr);
+	if (csr->ncols > 1)
+		mov_right(ch, csr);
+	else
+		mov_down(ch, csr);
 }
 
 static int	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
 {
-	const char		*kbuffs[] = {kcmps->upk, kcmps->downk, " ",
+	const char		*kbuffs[] = {kcmps->upk, kcmps->downk,
+								kcmps->leftk, kcmps->rightk, " ",
 								kcmps->delk, kcmps->bsk, NULL};
-	static void		(*kfuncs[])(t_choice **, t_cursor *) = {&mov_up, 
-								&mov_down, &select_curr_elem,
-								&delete_curr_elem, &delete_curr_elem, NULL};
+	static void		(*kfuncs[])(t_choice **, t_cursor *) = {&mov_up,
+								&mov_down, &mov_left, &mov_right,
+								&select_curr_elem, &delete_curr_elem,
+								&delete_curr_elem, NULL};
 	unsigned int	idx;
 
 	if (!ch || !kcmps)

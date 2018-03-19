@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 04:02:15 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 20:31:53 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,10 @@
 
 void		clear_choices(t_cursor *csr)
 {
-	const char		*cmstr = tgetstr("cm", NULL);
-	char			*gotostr;
 	size_t			len;
 
 	len = (csr->nlines > csr->ws.ws_row) ? csr->ws.ws_row : csr->nlines;
-	gotostr = tgoto(cmstr, 0, len);
-	tputs(gotostr, 1, &putcf);
+	movcap(0, len);
 	while (len--)
 	{
 		outcap("up");
@@ -64,9 +61,11 @@ static int	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
 	scroll = (csr->pos == idx && ch->titlelen > csr->ws.ws_col);
 	len = (ch->titlelen > csr->ws.ws_col) ? csr->ws.ws_col : ch->titlelen;
 	off = (scroll) ? csr->scroll_off : 0;
-	write(FT_OUT_FD, ch->title + off, (off + len > ch->titlelen) ? ch->titlelen - off : len);
+	write(FT_OUT_FD, ch->title + off,
+		(off + len > ch->titlelen) ? ch->titlelen - off : len);
 	if (scroll)
-		csr->scroll_off = csr->scroll_off + 1 > ch->titlelen ? 0 : csr->scroll_off + 1;
+		csr->scroll_off = (csr->scroll_off + 1 > ch->titlelen) ? 0
+						: csr->scroll_off + 1;
 	if (ch->selected || csr->pos == idx)
 		outcap("me");
 	return (scroll);
@@ -107,7 +106,7 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 ** t_cursor*	destination struct
 */
 
-void					set_window_prop(t_cursor *dest)
+void		set_window_prop(t_cursor *dest)
 {
 	ft_bzero(&dest->ws, sizeof(struct winsize));
 	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
@@ -121,4 +120,5 @@ void					set_window_prop(t_cursor *dest)
 	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
 	if (dest->nlines > dest->ws.ws_row)
 		dest->nlines = dest->ws.ws_row - 1;
+	dest->vscroll = 0;
 }

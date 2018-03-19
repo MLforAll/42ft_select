@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/16 03:17:08 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/19 20:32:20 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,22 @@ int		outcap_arg(char *name, int affcnt)
 int		outcap(char *name)
 {
 	return (outcap_arg(name, 1));
+}
+
+/*
+** movcap -- move cursor using termcap
+**
+** unsigned int		x position
+** unsigned int		y position
+*/
+
+int		movcap(unsigned int x, unsigned int y)
+{
+	const char		*cmstr = tgetstr("cm", NULL);
+	char			*gotostr;
+
+	if (!cmstr || !(gotostr = tgoto(cmstr, x, y)))
+		return (FALSE);
+	tputs(gotostr, 1, &putcf);
+	return (TRUE);
 }

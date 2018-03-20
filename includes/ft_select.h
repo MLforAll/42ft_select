@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 00:58:07 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 01:36:50 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int				init_display(t_cursor *csr);
 */
 
 void			clear_choices(t_cursor *csr);
+void			print_status(t_cursor *csr);
 void			print_with_csr(t_choice *choices, t_cursor *csr);
 
 /*

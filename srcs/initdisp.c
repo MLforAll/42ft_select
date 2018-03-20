@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 01:57:54 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 06:55:01 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ int			init_display(t_cursor *csr)
 	if (!outcap("ti") && !outcap("cl"))
 		return (FALSE);
 	outcap("vi");
-	print_status(csr);
 	signal(SIGTSTP, (void(*)(int))&signal_hdl);
 	signal(SIGCONT, (void(*)(int))&redraw_hdl);
 	signal(SIGWINCH, (void(*)(int))&redraw_hdl);

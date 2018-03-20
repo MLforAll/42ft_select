@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 20:36:30 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 00:06:30 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,12 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include "ft_select.h"
+
+/*
+** clear_choices
+**
+** t_cursor*	cursor
+*/
 
 void		clear_choices(t_cursor *csr)
 {
@@ -27,6 +33,13 @@ void		clear_choices(t_cursor *csr)
 		outcap("ce");
 	}
 }
+
+/*
+** print_padding -- print choice padding (private)
+**
+** t_choice*	choice to print
+** t_cursor*	cursor
+*/
 
 static void	print_padding(t_choice *ch, t_cursor *csr)
 {
@@ -43,6 +56,15 @@ static void	print_padding(t_choice *ch, t_cursor *csr)
 	ft_putstr_fd(padbuff, FT_OUT_FD);
 	free(padbuff);
 }
+
+/*
+** print_elem -- print choice (private)
+**
+** t_choice*	choice to print
+** t_cursor*	cursor
+** unsigned		column of choice
+** unsigned		index of choice
+*/
 
 static int	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
 {
@@ -71,6 +93,13 @@ static int	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
 	return (scroll);
 }
 
+/*
+** print_with_csr -- print all choices
+**
+** t_choice*	choices to print
+** t_cursor*	cursor
+*/
+
 void		print_with_csr(t_choice *choices, t_cursor *csr)
 {
 	unsigned int	idx;
@@ -98,27 +127,4 @@ void		print_with_csr(t_choice *choices, t_cursor *csr)
 		ft_putstr_fd("\n\r", FT_OUT_FD);
 	}
 	set_read_timeout((scroll_sw) ? 2 : 0, NULL);
-}
-
-/*
-** set_window_prop
-**
-** t_cursor*	destination struct
-*/
-
-void		set_window_prop(t_cursor *dest)
-{
-	ft_bzero(&dest->ws, sizeof(struct winsize));
-	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
-	if (dest->max < dest->ws.ws_row || dest->mlen > dest->ws.ws_col
-		|| dest->mlen <= 0)
-		dest->ncols = 1;
-	else
-		dest->ncols = dest->ws.ws_col / (dest->mlen + FT_PAD_NB);
-	if (dest->ncols <= 0)
-		dest->ncols = 1;
-	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
-	if (dest->nlines > dest->ws.ws_row)
-		dest->nlines = dest->ws.ws_row - 1;
-	dest->vscroll = 0;
 }

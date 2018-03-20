@@ -6,16 +6,14 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 20:35:16 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 01:00:01 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "ft_select.h"
-
-static t_choice	**g_chs;
-static t_cursor	*g_csr;
 
 static void	delete_curr_elem(t_choice **ch, t_cursor *csr)
 {
@@ -76,14 +74,29 @@ static int	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
 	return (FALSE);
 }
 
-void		redraw_hdl(int sigc)
+void		redraw_hdl(unsigned long long sigc)
 {
+	static t_choice	**ch = NULL;
+	static t_cursor	*csr = NULL;
+
+	if (!ch)
+		ch = (t_choice**)sigc;
+	else if (!csr)
+		csr = (t_cursor*)sigc;
+	if (!ch || !csr || sigc > INT_MAX)
+		return ;
 	if (sigc == SIGCONT)
-		init_terminal();
+	{
+		set_signals();
+		init_restore_terminal(YES);
+		init_display(csr);
+	}
 	else
+	{
 		outcap("cl");
-	set_window_prop(g_csr);
-	print_with_csr(*g_chs, g_csr);
+		set_window_prop(csr);
+	}
+	print_with_csr(*ch, csr);
 }
 
 int			chk_keys(t_choice **choices, t_cursor *csr, t_tkeys *kcmps)
@@ -93,8 +106,6 @@ int			chk_keys(t_choice **choices, t_cursor *csr, t_tkeys *kcmps)
 
 	if (!choices || !csr)
 		return (FALSE);
-	g_chs = choices;
-	g_csr = csr;
 	print_with_csr(*choices, csr);
 	ft_bzero(buff, sizeof(buff));
 	while ((rb = read(FT_OUT_FD, buff, 4)) != -1)

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 19:57:44 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 00:58:07 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,33 +55,44 @@ typedef struct	s_choice
 ** Set/Restore Terminal
 */
 
-int				fill_kcmps(t_tkeys *dest);
-void			restore_terminal(void);
 int				set_read_timeout(cc_t timeout, struct termios *tptr);
-int				init_terminal(void);
+int				init_restore_terminal(int init);
 
 /*
-** printing
+** Choice display
+*/
+
+void			set_window_prop(t_cursor *dest);
+int				fill_kcmps(t_tkeys *dest);
+int				init_display(t_cursor *csr);
+
+/*
+** Printing
 */
 
 void			clear_choices(t_cursor *csr);
-void			erase_curr_line(t_cursor *csr);
 void			print_with_csr(t_choice *choices, t_cursor *csr);
-void			set_window_prop(t_cursor *dest);
 
 /*
-** interaction
+** Interaction
 */
 
 void			mov_up(t_choice **ch, t_cursor *csr);
 void			mov_down(t_choice **ch, t_cursor *csr);
 void			mov_left(t_choice **ch, t_cursor *csr);
 void			mov_right(t_choice **ch, t_cursor *csr);
-void			redraw_hdl(int sigc);
 int				chk_keys(t_choice **choices, t_cursor *csr, t_tkeys *kcmps);
 
 /*
-** stuff
+** Signals
+*/
+
+void			signal_hdl(int sigc);
+void			redraw_hdl(unsigned long long sigc);
+int				set_signals(void);
+
+/*
+** List Utilities
 */
 
 t_choice		*ft_chnew(char *title, int selected);

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 20:26:16 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 01:03:49 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,43 @@ static void		return_res(t_choice *choices)
 
 static void		fatal(const char *app, const char *err)
 {
+	init_restore_terminal(NO);
 	ft_putstr_fd(app, STDERR_FILENO);
 	ft_putstr_fd(": ", STDERR_FILENO);
 	ft_putendl_fd(err, STDERR_FILENO);
 	exit(EXIT_FAILURE);
+}
+
+/*
+** fill_tcdb -- fill the termcap database
+**
+** char*		name of app (av[0])
+*/
+
+static void		fill_tcdb(const char *app_name)
+{
+	char		*termtype;
+	char		ans;
+
+	ans = '\0';
+	if (!(termtype = getenv("TERM")))
+	{
+		ft_putstr_fd("TERM env var not found.\r\n", FT_OUT_FD);
+		while (ans != 'y')
+		{
+			ft_putstr_fd("Use default value ? (y/N) ", FT_OUT_FD);
+			if (read(FT_OUT_FD, &ans, 1) < 1)
+				fatal(app_name, "\nwrite error");
+			ft_putstr_fd("\r\n", FT_OUT_FD);
+			ans = ft_tolower(ans);
+			if (ans == 'y')
+				termtype = "xterm";
+			else if (ans == 'n')
+				fatal(app_name, "User canceled the operation");
+		}
+	}
+	if (tgetent(NULL, termtype) <= 0)
+		fatal(app_name, "Invalid terminal");
 }
 
 /*
@@ -93,28 +126,29 @@ static void		fatal(const char *app, const char *err)
 
 int				main(int ac, char **av)
 {
-	char		*termtype;
 	t_choice	*choices;
 	t_cursor	csr;
 	t_tkeys		kcmps;
+	char		vusp_char;
 	int			show_res;
 
-	if (!(termtype = getenv("TERM")))
-		fatal(av[0], "TERM env var missing");
-	if (tgetent(NULL, termtype) <= 0)
-		fatal(av[0], "Invalid terminal");
+	vusp_char = '\0';
 	if (!ft_isatty(FT_OUT_FD))
 		fatal(av[0], "Invalid output fd");
+	if (!set_signals() || !(vusp_char = init_restore_terminal(YES)))
+		fatal(av[0], "Init error");
+	signal_hdl(vusp_char);
+	redraw_hdl((unsigned long long)&choices);
+	redraw_hdl((unsigned long long)&csr);
+	fill_tcdb(av[0]);
 	ft_bzero(&csr, sizeof(t_cursor));
 	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
 		return (EXIT_FAILURE);
-	set_window_prop(&csr);
-	if (!fill_kcmps(&kcmps) || !init_terminal())
-		fatal(av[0], "Error setting the terminal");
+	if (!init_display(&csr) || !fill_kcmps(&kcmps))
+		fatal(av[0], "Error setting display");
 	show_res = chk_keys(&choices, &csr, &kcmps);
-	restore_terminal();
-	if (show_res && !ft_isatty(STDOUT_FILENO))
-		return_res(choices);
+	init_restore_terminal(NO);
+	(show_res && !ft_isatty(STDOUT_FILENO)) ? return_res(choices) : 0;
 	ft_chdel(&choices);
 	return (EXIT_SUCCESS);
 }

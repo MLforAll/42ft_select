@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 04:02:22 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/20 00:57:04 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,49 +16,23 @@
 #include <sys/ioctl.h>
 #include "ft_select.h"
 
-static struct termios	saved_t;
-
-/*
-** fill_kcmps
-**
-** t_tkeys*		struct containing term movkeys caps
-*/
-
-int						fill_kcmps(t_tkeys *dest)
-{
-	dest->rightk = tgetstr("kr", NULL);
-	dest->upk = tgetstr("ku", NULL);
-	dest->downk = tgetstr("kd", NULL);
-	dest->leftk = tgetstr("kl", NULL);
-	dest->delk = tgetstr("kD", NULL);
-	(dest->bsk)[0] = 127;
-	(dest->bsk)[1] = '\0';
-	return (TRUE);
-}
-
-/*
-** restore_terminal
-*/
-
-void					restore_terminal(void)
-{
-	outcap("ve");
-	outcap("ke");
-	outcap("te");
-	tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t);
-}
-
 /*
 ** signal_hdl -- handle signals (except SIGCONT and SIGWINCH)
 **
 ** int			signal code
 */
 
-static void				signal_hdl(int sigc)
+void		signal_hdl(int sigc)
 {
-	const char	sim_sigtstp[2] = {saved_t.c_cc[VSUSP], '\0'};
+	static char	vsusp_char = 0;
+	const char	sim_sigtstp[2] = {vsusp_char, '\0'};
 
-	restore_terminal();
+	if (vsusp_char == 0)
+	{
+		vsusp_char = sigc;
+		return ;
+	}
+	init_restore_terminal(NO);
 	if (sigc == SIGTSTP)
 	{
 		signal(sigc, SIG_DFL);
@@ -69,14 +43,36 @@ static void				signal_hdl(int sigc)
 }
 
 /*
+** set_signals
+*/
+
+int			set_signals(void)
+{
+	const int		sigs[] = {SIGHUP, SIGINT, SIGQUIT, SIGTERM,
+							SIGTSTP, SIGCONT};
+	static void		(*hdls[])(int) = {&signal_hdl, &signal_hdl, &signal_hdl,
+								&signal_hdl, SIG_IGN, SIG_IGN, NULL};
+	unsigned int	idx;
+
+	idx = 0;
+	while (hdls[idx])
+	{
+		if (signal(sigs[idx], hdls[idx]) == SIG_ERR)
+			return (FALSE);
+		idx++;
+	}
+	return (TRUE);
+}
+
+/*
 ** set_read_timeout
 **
 ** cc_t				timeout
-** struct termios*	existing dump termios struct
+** struct termios*	existing dump of termios struct
 **						(will NOT apply changes if provided)
 */
 
-int						set_read_timeout(cc_t timeout, struct termios *tptr)
+int			set_read_timeout(cc_t timeout, struct termios *tptr)
 {
 	struct termios	t;
 	struct termios	*dest;
@@ -97,16 +93,24 @@ int						set_read_timeout(cc_t timeout, struct termios *tptr)
 }
 
 /*
-** init_terminal
+** init_restore_terminal
+**
+** int				init or restore terminal
 */
 
-int						init_terminal(void)
+int			init_restore_terminal(int init)
 {
-	struct termios	t;
-	int				success;
-	int				sigc;
+	static struct termios	saved_t;
+	struct termios			t;
 
-	success = 0;
+	if (!init)
+	{
+		outcap("ve");
+		outcap("ke");
+		outcap("te");
+		tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t);
+		return (TRUE);
+	}
 	if (tcgetattr(FT_OUT_FD, &saved_t) == -1)
 		return (FALSE);
 	t = saved_t;
@@ -115,15 +119,5 @@ int						init_terminal(void)
 	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)
 		return (FALSE);
-	if (!(success += outcap("ti") + outcap("ks") + outcap("vi")))
-		return (FALSE);
-	sigc = 0;
-	while (sigc < 32)
-	{
-		if (sigc != 11)
-			signal(sigc, (sigc != SIGCONT) ? &signal_hdl : &redraw_hdl);
-		sigc++;
-	}
-	signal(SIGWINCH, &redraw_hdl);
-	return (TRUE);
+	return (saved_t.c_cc[VSUSP]);
 }

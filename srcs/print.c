@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 08:38:59 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 11:38:23 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void		clear_choices(t_env *env)
 {
 	size_t			len;
 
-	len = (env->nlines > env->ws.ws_row) ? env->ws.ws_row : env->nlines + 1;
+	len = (env->nlines + 1 > env->ws.ws_row) ? env->ws.ws_row : env->nlines + 1;
 	movcap(0, len);
 	while (len--)
 	{

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 01:36:50 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:06:45 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ typedef struct	s_choice
 */
 
 int				set_read_timeout(cc_t timeout, struct termios *tptr);
-int				init_restore_terminal(int init);
+int				init_restore_terminal(int init, char *vsusp_ptr);
 
 /*
 ** Choice display
@@ -108,8 +108,8 @@ t_choice		*ft_chgetidx(t_choice *head, unsigned int idx);
 
 int				ft_strasciieq(char *s, char c);
 int				putcf(int c);
-int				outcap_arg(char *name, int affcnt);
 int				outcap(char *name);
 int				movcap(unsigned int x, unsigned int y);
+void			fatal(const char *app, const char *err);
 
 #endif

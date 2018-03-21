@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/19 20:32:20 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:05:24 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,24 +46,6 @@ int		putcf(int c)
 }
 
 /*
-** outcap_arg -- output a termcap with argument
-**
-** char*		name of termcap
-** int			number of lines affected
-*/
-
-int		outcap_arg(char *name, int affcnt)
-{
-	char	*cap;
-
-	cap = tgetstr(name, NULL);
-	if (!cap)
-		return (FALSE);
-	tputs(cap, affcnt, &putcf);
-	return (TRUE);
-}
-
-/*
 ** outcap -- output a termcap
 **
 ** char*		name of termcap
@@ -71,7 +53,13 @@ int		outcap_arg(char *name, int affcnt)
 
 int		outcap(char *name)
 {
-	return (outcap_arg(name, 1));
+	char	*cap;
+
+	cap = tgetstr(name, NULL);
+	if (!cap)
+		return (FALSE);
+	tputs(cap, 1, &putcf);
+	return (TRUE);
 }
 
 /*
@@ -90,4 +78,20 @@ int		movcap(unsigned int x, unsigned int y)
 		return (FALSE);
 	tputs(gotostr, 1, &putcf);
 	return (TRUE);
+}
+
+/*
+** fatal
+**
+** const char*	app's name
+** const char*	error message
+*/
+
+void	fatal(const char *app, const char *err)
+{
+	init_restore_terminal(NO, NULL);
+	ft_putstr_fd(app, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putendl_fd(err, STDERR_FILENO);
+	exit(EXIT_FAILURE);
 }

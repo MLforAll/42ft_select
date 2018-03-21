@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 00:57:04 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:05:06 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,15 @@
 
 void		signal_hdl(int sigc)
 {
-	static char	vsusp_char = 0;
-	const char	sim_sigtstp[2] = {vsusp_char, '\0'};
+	static char		vsusp_char = 0;
+	const char		sim_sigtstp[2] = {vsusp_char, '\0'};
 
 	if (vsusp_char == 0)
 	{
 		vsusp_char = sigc;
 		return ;
 	}
-	init_restore_terminal(NO);
+	init_restore_terminal(NO, NULL);
 	if (sigc == SIGTSTP)
 	{
 		signal(sigc, SIG_DFL);
@@ -74,13 +74,15 @@ int			set_signals(void)
 
 int			set_read_timeout(cc_t timeout, struct termios *tptr)
 {
-	struct termios	t;
-	struct termios	*dest;
+	static int				noget = FALSE;
+	static struct termios	t;
+	struct termios			*dest;
 
 	if (!tptr)
 	{
-		if (tcgetattr(FT_OUT_FD, &t) == -1)
+		if (!noget && tcgetattr(FT_OUT_FD, &t) == -1)
 			return (FALSE);
+		noget = TRUE;
 		dest = &t;
 	}
 	else
@@ -96,9 +98,10 @@ int			set_read_timeout(cc_t timeout, struct termios *tptr)
 ** init_restore_terminal
 **
 ** int				init or restore terminal
+** char*			ptr to store vsusp char
 */
 
-int			init_restore_terminal(int init)
+int			init_restore_terminal(int init, char *vsusp_ptr)
 {
 	static struct termios	saved_t;
 	struct termios			t;
@@ -108,8 +111,7 @@ int			init_restore_terminal(int init)
 		outcap("ve");
 		outcap("ke");
 		outcap("te");
-		tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t);
-		return (TRUE);
+		return (tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t) == -1 ? FALSE : TRUE);
 	}
 	if (tcgetattr(FT_OUT_FD, &saved_t) == -1)
 		return (FALSE);
@@ -119,5 +121,7 @@ int			init_restore_terminal(int init)
 	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)
 		return (FALSE);
-	return (saved_t.c_cc[VSUSP]);
+	if (vsusp_ptr)
+		*vsusp_ptr = saved_t.c_cc[VSUSP];
+	return (TRUE);
 }

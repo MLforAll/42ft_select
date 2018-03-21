@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 01:00:01 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:04:59 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ static void	delete_curr_elem(t_choice **ch, t_cursor *csr)
 	if (!(tmp = ft_chgetidx(*ch, csr->pos)))
 		return ;
 	ft_chdelone(ch, tmp);
+	set_window_prop(csr);
 	if (csr->pos > 0)
 	{
 		csr->pos--;
 		csr->max--;
 	}
-	set_window_prop(csr);
 }
 
 static void	select_curr_elem(t_choice **ch, t_cursor *csr)
@@ -88,7 +88,7 @@ void		redraw_hdl(unsigned long long sigc)
 	if (sigc == SIGCONT)
 	{
 		set_signals();
-		init_restore_terminal(YES);
+		init_restore_terminal(YES, NULL);
 		init_display(csr);
 	}
 	else
@@ -112,13 +112,13 @@ int			chk_keys(t_choice **choices, t_cursor *csr, t_tkeys *kcmps)
 	{
 		if (rb > 0 && (ft_strequ(buff, "\n") || ft_strasciieq(buff, 4)))
 			break ;
-		if ((rb > 0 && ft_strasciieq(buff, 27)) || !*choices)
-			return (FALSE);
 		if (rb == 0 || interact(buff, kcmps, choices, csr))
 		{
 			clear_choices(csr);
 			print_with_csr(*choices, csr);
 		}
+		if ((rb > 0 && ft_strasciieq(buff, 27)) || !*choices)
+			return (FALSE);
 		(rb > 0) ? ft_bzero(buff, sizeof(buff)) : 0;
 	}
 	return (TRUE);

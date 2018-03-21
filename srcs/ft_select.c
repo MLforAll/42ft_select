@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 01:03:49 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:04:46 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,22 +70,6 @@ static void		return_res(t_choice *choices)
 }
 
 /*
-** fatal
-**
-** const char*	app's name
-** const char*	error message
-*/
-
-static void		fatal(const char *app, const char *err)
-{
-	init_restore_terminal(NO);
-	ft_putstr_fd(app, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putendl_fd(err, STDERR_FILENO);
-	exit(EXIT_FAILURE);
-}
-
-/*
 ** fill_tcdb -- fill the termcap database
 **
 ** char*		name of app (av[0])
@@ -129,26 +113,26 @@ int				main(int ac, char **av)
 	t_choice	*choices;
 	t_cursor	csr;
 	t_tkeys		kcmps;
-	char		vusp_char;
 	int			show_res;
+	char		vsusp_char;
 
-	vusp_char = '\0';
-	if (!ft_isatty(FT_OUT_FD))
+	vsusp_char = 0;
+	ft_bzero(&csr, sizeof(t_cursor));
+	if (!isatty(FT_OUT_FD))
 		fatal(av[0], "Invalid output fd");
-	if (!set_signals() || !(vusp_char = init_restore_terminal(YES)))
+	if (!set_signals() || !init_restore_terminal(YES, &vsusp_char))
 		fatal(av[0], "Init error");
-	signal_hdl(vusp_char);
+	signal_hdl(vsusp_char);
 	redraw_hdl((unsigned long long)&choices);
 	redraw_hdl((unsigned long long)&csr);
 	fill_tcdb(av[0]);
-	ft_bzero(&csr, sizeof(t_cursor));
 	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
-		return (EXIT_FAILURE);
+		fatal(av[0], "Missing arguments or malloc error");
 	if (!init_display(&csr) || !fill_kcmps(&kcmps))
 		fatal(av[0], "Error setting display");
 	show_res = chk_keys(&choices, &csr, &kcmps);
-	init_restore_terminal(NO);
-	(show_res && !ft_isatty(STDOUT_FILENO)) ? return_res(choices) : 0;
+	init_restore_terminal(NO, NULL);
+	(show_res && !isatty(STDOUT_FILENO)) ? return_res(choices) : 0;
 	ft_chdel(&choices);
 	return (EXIT_SUCCESS);
 }

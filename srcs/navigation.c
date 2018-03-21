@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 21:29:38 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:14:14 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 03:10:31 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ static void	mov_page(t_env *env, int up)
 
 void		mov_up(t_env *env)
 {
-	env->pos = (env->pos > 0) ? env->pos - env->ncols : env->max - env->ncols;
+	if ((long)(env->pos - env->ncols) >= 0)
+		env->pos -= env->ncols;
+	else if (env->ncols == 1)
+		env->pos = env->max - 1;
 	if (env->nlines != env->ws.ws_row - 1)
 		return ;
 	mov_page(env, TRUE);
@@ -43,7 +46,10 @@ void		mov_up(t_env *env)
 
 void		mov_down(t_env *env)
 {
-	env->pos = (env->pos < env->max - env->ncols) ? env->pos + env->ncols : 0;
+	if (env->pos < env->max - env->ncols)
+		env->pos = env->pos + env->ncols;
+	else if (env->pos + 1 == env->max && env->ncols == 1)
+		env->pos = 0;
 	if (env->nlines != env->ws.ws_row - 1)
 		return ;
 	mov_page(env, FALSE);

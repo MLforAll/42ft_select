@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:23:41 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:26:07 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 /*
 ** get_choices
 **
+** t_env*		environement
 ** char**		arguments of prgm aka av + 1
 */
 
@@ -72,7 +73,7 @@ static void		return_res(t_choice *choices)
 /*
 ** fill_tcdb -- fill the termcap database
 **
-** char*		name of app (av[0])
+** const char*	name of app (av[0])
 */
 
 static void		fill_tcdb(const char *app_name)

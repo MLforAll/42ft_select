@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:26:07 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 08:43:01 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,26 +21,25 @@
 ** char**		arguments of prgm aka av + 1
 */
 
-static size_t	get_choices(t_env *env, char **args)
+static int		get_choices(t_env *env, char **args)
 {
-	size_t		ret;
 	t_choice	*new;
 
 	if (!env)
-		return (0);
-	ret = 0;
+		return (FALSE);
+	env->max = 0;
 	env->choices = NULL;
 	while (*args)
 	{
 		if (!(new = ft_chnew(*args, NO)))
-			return (0);
+			return (FALSE);
 		if (new->titlelen > env->mlen)
 			env->mlen = new->titlelen;
 		ft_chpush(&env->choices, new);
 		args++;
-		ret++;
+		env->max++;
 	}
-	return (ret);
+	return (TRUE);
 }
 
 /*
@@ -125,11 +124,12 @@ int				main(int ac, char **av)
 	signal_hdl(vsusp_char);
 	redraw_hdl((unsigned long long)&env);
 	fill_tcdb(av[0]);
-	if (ac == 1 || !(env.max = get_choices(&env, av + 1)))
+	if (ac == 1 || !get_choices(&env, av + 1))
 		fatal(av[0], "Missing arguments or malloc error");
-	if (!init_display(&env) || !fill_kcmps(&kcmps))
+	if (!init_restore_display(&env, YES) || !fill_kcmps(&kcmps))
 		fatal(av[0], "Error setting display");
 	show_res = chk_keys(&env, &kcmps);
+	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);
 	(show_res && !isatty(STDOUT_FILENO)) ? return_res(env.choices) : 0;
 	ft_chdel(&env.choices);

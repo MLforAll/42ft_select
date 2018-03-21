@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:20:56 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 08:26:08 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void		signal_hdl(int sigc)
 		vsusp_char = sigc;
 		return ;
 	}
+	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);
 	if (sigc == SIGTSTP)
 	{
@@ -107,12 +108,7 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 	struct termios			t;
 
 	if (!init)
-	{
-		outcap("ve");
-		outcap("ke");
-		outcap("te");
 		return (tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t) == -1 ? FALSE : TRUE);
-	}
 	if (tcgetattr(FT_OUT_FD, &saved_t) == -1)
 		return (FALSE);
 	t = saved_t;

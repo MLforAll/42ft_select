@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:23:58 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 08:39:08 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@ static void	delete_curr_elem(t_env *env)
 	if (!(tmp = ft_chgetidx(env->choices, env->pos)))
 		return ;
 	ft_chdelone(&env->choices, tmp);
-	set_window_prop(env);
 	if (env->pos > 0)
 	{
 		env->pos--;
 		env->max--;
 	}
+	set_window_prop(env);
 }
 
 static void	select_curr_elem(t_env *env)
@@ -89,7 +89,7 @@ void		redraw_hdl(unsigned long long sigc)
 	{
 		set_signals();
 		init_restore_terminal(YES, NULL);
-		init_display(env);
+		init_restore_display(env, YES);
 	}
 	else
 	{

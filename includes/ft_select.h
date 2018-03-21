@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:20:54 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 08:51:41 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int				init_restore_terminal(int init, char *vsusp_ptr);
 
 void			set_window_prop(t_env *dest);
 int				fill_kcmps(t_tkeys *dest);
-int				init_display(t_env *env);
+int				init_restore_display(t_env *env, int init);
 
 /*
 ** Printing

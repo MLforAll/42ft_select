@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 08:39:08 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 09:15:13 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void		redraw_hdl(unsigned long long sigc)
 	else
 	{
 		outcap("cl");
+		env->pos = 0;
 		set_window_prop(env);
 	}
 	print_with_env(env);

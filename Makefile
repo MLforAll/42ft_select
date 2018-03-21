@@ -6,7 +6,7 @@
 #    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/20 21:41:19 by kdumarai          #+#    #+#              #
-#    Updated: 2018/03/19 23:49:44 by kdumarai         ###   ########.fr        #
+#    Updated: 2018/03/21 09:28:41 by kdumarai         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,8 +27,8 @@ SRCFILES = ft_select.c \
 		   interact.c \
 		   navigation.c \
 		   print.c \
-		   init.c \
-		   initdisp.c \
+		   terminal.c \
+		   display.c \
 		   chlst.c \
 		   misc.c
 SRCS = $(addprefix $(SRCDIR)/, $(SRCFILES))

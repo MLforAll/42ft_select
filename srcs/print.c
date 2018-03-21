@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 07:03:46 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:18:42 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 /*
 ** clear_choices
 **
-** t_cursor*	cursor
+** t_env*		environnement
 */
 
-void		clear_choices(t_cursor *csr)
+void		clear_choices(t_env *env)
 {
 	size_t			len;
 
-	len = (csr->nlines > csr->ws.ws_row) ? csr->ws.ws_row : csr->nlines;
+	len = (env->nlines > env->ws.ws_row) ? env->ws.ws_row : env->nlines;
 	movcap(0, len);
 	while (len--)
 	{
@@ -38,10 +38,10 @@ void		clear_choices(t_cursor *csr)
 ** print_padding -- print choice padding (private)
 **
 ** t_choice*	choice to print
-** t_cursor*	cursor
+** t_env*		environnement
 */
 
-static void	print_padding(t_choice *ch, t_cursor *csr)
+static void	print_padding(t_choice *ch, t_env *env)
 {
 	char			*padbuff;
 	size_t			padlen;
@@ -49,7 +49,7 @@ static void	print_padding(t_choice *ch, t_cursor *csr)
 	if (!ch->prev || !ch->prev->title)
 		padlen = FT_PAD_NB;
 	else
-		padlen = csr->mlen - ch->prev->titlelen + FT_PAD_NB;
+		padlen = env->mlen - ch->prev->titlelen + FT_PAD_NB;
 	if (!(padbuff = ft_strnew(padlen)))
 		return ;
 	ft_memset(padbuff, ' ', padlen);
@@ -61,63 +61,62 @@ static void	print_padding(t_choice *ch, t_cursor *csr)
 ** print_elem -- print choice (private)
 **
 ** t_choice*	choice to print
-** t_cursor*	cursor
+** t_env*		environnement
 ** unsigned		column of choice
 ** unsigned		index of choice
 */
 
-static int	print_elem(t_choice *ch, t_cursor *csr, unsigned ccol, unsigned idx)
+static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
 {
 	size_t			len;
 	unsigned int	off;
 	int				scroll;
 
-	if (!ch || !csr)
+	if (!ch || !env)
 		return (FALSE);
 	if (ccol > 0)
-		print_padding(ch, csr);
-	if (csr->pos == idx)
+		print_padding(ch, env);
+	if (env->pos == idx)
 		outcap("us");
 	if (ch->selected)
 		outcap("mr");
-	scroll = (csr->pos == idx && ch->titlelen > csr->ws.ws_col);
-	len = (ch->titlelen > csr->ws.ws_col) ? csr->ws.ws_col : ch->titlelen;
-	off = (scroll) ? csr->scroll_off : 0;
+	scroll = (env->pos == idx && ch->titlelen > env->ws.ws_col);
+	len = (ch->titlelen > env->ws.ws_col) ? env->ws.ws_col : ch->titlelen;
+	off = (scroll) ? env->scroll_off : 0;
 	write(FT_OUT_FD, ch->title + off,
 		(off + len > ch->titlelen) ? ch->titlelen - off : len);
 	if (scroll)
-		csr->scroll_off = (csr->scroll_off + 1 > ch->titlelen) ? 0
-						: csr->scroll_off + 1;
-	if (ch->selected || csr->pos == idx)
+		env->scroll_off = (env->scroll_off + 1 > ch->titlelen) ? 0
+						: env->scroll_off + 1;
+	if (ch->selected || env->pos == idx)
 		outcap("me");
 	return (scroll);
 }
 
 /*
-** print_with_csr -- print all choices
+** print_with_env -- print all choices
 **
-** t_choice*	choices to print
-** t_cursor*	cursor
+** t_env*		environnement
 */
 
-void		print_with_csr(t_choice *choices, t_cursor *csr)
+void		print_with_env(t_env *env)
 {
+	t_choice		*choices;
 	unsigned int	idx;
 	unsigned int	cline;
 	unsigned int	ccol;
 	int				scroll_sw;
 
-	idx = csr->vscroll;
+	idx = env->vscroll;
 	cline = 0;
-	if (idx > 0)
-		choices = ft_chgetidx(choices, idx);
+	choices = ft_chgetidx(env->choices, idx);
 	scroll_sw = FALSE;
-	while (choices && cline < csr->nlines)
+	while (choices && cline < env->nlines)
 	{
 		ccol = 0;
-		while (choices && ccol < csr->ncols)
+		while (choices && ccol < env->ncols)
 		{
-			if (print_elem(choices, csr, ccol, idx))
+			if (print_elem(choices, env, ccol, idx))
 				scroll_sw = TRUE;
 			choices = choices->next;
 			idx++;

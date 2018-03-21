@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:04:59 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:23:58 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,58 +15,58 @@
 #include <limits.h>
 #include "ft_select.h"
 
-static void	delete_curr_elem(t_choice **ch, t_cursor *csr)
+static void	delete_curr_elem(t_env *env)
 {
 	t_choice		*tmp;
 
-	if (!ch || !csr)
+	if (!env)
 		return ;
-	if (!(tmp = ft_chgetidx(*ch, csr->pos)))
+	if (!(tmp = ft_chgetidx(env->choices, env->pos)))
 		return ;
-	ft_chdelone(ch, tmp);
-	set_window_prop(csr);
-	if (csr->pos > 0)
+	ft_chdelone(&env->choices, tmp);
+	set_window_prop(env);
+	if (env->pos > 0)
 	{
-		csr->pos--;
-		csr->max--;
+		env->pos--;
+		env->max--;
 	}
 }
 
-static void	select_curr_elem(t_choice **ch, t_cursor *csr)
+static void	select_curr_elem(t_env *env)
 {
 	t_choice		*bw;
 
-	if (!ch || !csr)
+	if (!env)
 		return ;
-	if (!(bw = ft_chgetidx(*ch, csr->pos)))
+	if (!(bw = ft_chgetidx(env->choices, env->pos)))
 		return ;
 	bw->selected = !bw->selected;
-	if (csr->ncols > 1)
-		mov_right(ch, csr);
+	if (env->ncols > 1)
+		mov_right(env);
 	else
-		mov_down(ch, csr);
+		mov_down(env);
 }
 
-static int	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
+static int	interact(char *buff, t_tkeys *kcmps, t_env *env)
 {
 	const char		*kbuffs[] = {kcmps->upk, kcmps->downk,
 								kcmps->leftk, kcmps->rightk, " ",
 								kcmps->delk, kcmps->bsk, NULL};
-	static void		(*kfuncs[])(t_choice **, t_cursor *) = {&mov_up,
+	static void		(*kfuncs[])(t_env *) = {&mov_up,
 								&mov_down, &mov_left, &mov_right,
 								&select_curr_elem, &delete_curr_elem,
 								&delete_curr_elem, NULL};
 	unsigned int	idx;
 
-	if (!ch || !kcmps)
+	if (!env || !kcmps)
 		return (FALSE);
-	csr->scroll_off = 0;
+	env->scroll_off = 0;
 	idx = 0;
 	while (kbuffs[idx])
 	{
 		if (ft_strequ(buff, kbuffs[idx]))
 		{
-			(kfuncs[idx])(ch, csr);
+			(kfuncs[idx])(env);
 			return (TRUE);
 		}
 		idx++;
@@ -76,48 +76,48 @@ static int	interact(char *buff, t_tkeys *kcmps, t_choice **ch, t_cursor *csr)
 
 void		redraw_hdl(unsigned long long sigc)
 {
-	static t_choice	**ch = NULL;
-	static t_cursor	*csr = NULL;
+	static t_env	*env = NULL;
 
-	if (!ch)
-		ch = (t_choice**)sigc;
-	else if (!csr)
-		csr = (t_cursor*)sigc;
-	if (!ch || !csr || sigc > INT_MAX)
+	if (!env)
+	{
+		env = (t_env*)sigc;
+		return ;
+	}
+	if (!env || sigc > INT_MAX)
 		return ;
 	if (sigc == SIGCONT)
 	{
 		set_signals();
 		init_restore_terminal(YES, NULL);
-		init_display(csr);
+		init_display(env);
 	}
 	else
 	{
 		outcap("cl");
-		set_window_prop(csr);
+		set_window_prop(env);
 	}
-	print_with_csr(*ch, csr);
+	print_with_env(env);
 }
 
-int			chk_keys(t_choice **choices, t_cursor *csr, t_tkeys *kcmps)
+int			chk_keys(t_env *env, t_tkeys *kcmps)
 {
 	char			buff[5];
 	ssize_t			rb;
 
-	if (!choices || !csr)
+	if (!env)
 		return (FALSE);
-	print_with_csr(*choices, csr);
+	print_with_env(env);
 	ft_bzero(buff, sizeof(buff));
 	while ((rb = read(FT_OUT_FD, buff, 4)) != -1)
 	{
 		if (rb > 0 && (ft_strequ(buff, "\n") || ft_strasciieq(buff, 4)))
 			break ;
-		if (rb == 0 || interact(buff, kcmps, choices, csr))
+		if (rb == 0 || interact(buff, kcmps, env))
 		{
-			clear_choices(csr);
-			print_with_csr(*choices, csr);
+			clear_choices(env);
+			print_with_env(env);
 		}
-		if ((rb > 0 && ft_strasciieq(buff, 27)) || !*choices)
+		if ((rb > 0 && ft_strasciieq(buff, 27)) || !env->choices)
 			return (FALSE);
 		(rb > 0) ? ft_bzero(buff, sizeof(buff)) : 0;
 	}

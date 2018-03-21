@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 21:29:38 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 02:07:16 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:14:14 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,57 +14,53 @@
 #include <stdlib.h>
 #include "ft_select.h"
 
-static void	mov_page(t_cursor *csr, int up)
+static void	mov_page(t_env *env, int up)
 {
 	if (up)
 	{
-		if (csr->pos == csr->max - csr->ncols)
-			csr->vscroll = csr->nlines * csr->ncols \
-					* (csr->max / (csr->nlines * csr->ncols));
-		else if (csr->pos < csr->vscroll)
-			csr->vscroll -= csr->nlines * csr->ncols;
+		if (env->pos == env->max - env->ncols)
+			env->vscroll = env->nlines * env->ncols \
+					* (env->max / (env->nlines * env->ncols));
+		else if (env->pos < env->vscroll)
+			env->vscroll -= env->nlines * env->ncols;
 	}
 	else
 	{
-		if (csr->pos == 0)
-			csr->vscroll = 0;
-		else if (csr->pos + 1 > csr->vscroll + csr->nlines * csr->ncols)
-			csr->vscroll += csr->nlines * csr->ncols;
+		if (env->pos == 0)
+			env->vscroll = 0;
+		else if (env->pos + 1 > env->vscroll + env->nlines * env->ncols)
+			env->vscroll += env->nlines * env->ncols;
 	}
 }
 
-void		mov_up(t_choice **ch, t_cursor *csr)
+void		mov_up(t_env *env)
 {
-	(void)ch;
-	csr->pos = (csr->pos > 0) ? csr->pos - csr->ncols : csr->max - csr->ncols;
-	if (csr->nlines != csr->ws.ws_row - 1)
+	env->pos = (env->pos > 0) ? env->pos - env->ncols : env->max - env->ncols;
+	if (env->nlines != env->ws.ws_row - 1)
 		return ;
-	mov_page(csr, TRUE);
+	mov_page(env, TRUE);
 }
 
-void		mov_down(t_choice **ch, t_cursor *csr)
+void		mov_down(t_env *env)
 {
-	(void)ch;
-	csr->pos = (csr->pos < csr->max - csr->ncols) ? csr->pos + csr->ncols : 0;
-	if (csr->nlines != csr->ws.ws_row - 1)
+	env->pos = (env->pos < env->max - env->ncols) ? env->pos + env->ncols : 0;
+	if (env->nlines != env->ws.ws_row - 1)
 		return ;
-	mov_page(csr, FALSE);
+	mov_page(env, FALSE);
 }
 
-void		mov_left(t_choice **ch, t_cursor *csr)
+void		mov_left(t_env *env)
 {
-	(void)ch;
-	if (csr->ncols < 2)
+	if (env->ncols < 2)
 		return ;
-	csr->pos = (csr->pos > 0) ? csr->pos - 1 : csr->max - 1;
-	mov_page(csr, TRUE);
+	env->pos = (env->pos > 0) ? env->pos - 1 : env->max - 1;
+	mov_page(env, TRUE);
 }
 
-void		mov_right(t_choice **ch, t_cursor *csr)
+void		mov_right(t_env *env)
 {
-	(void)ch;
-	if (csr->ncols < 2)
+	if (env->ncols < 2)
 		return ;
-	csr->pos = (csr->pos < csr->max - 1) ? csr->pos + 1 : 0;
-	mov_page(csr, FALSE);
+	env->pos = (env->pos < env->max - 1) ? env->pos + 1 : 0;
+	mov_page(env, FALSE);
 }

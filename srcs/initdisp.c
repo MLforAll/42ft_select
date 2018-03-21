@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/20 06:55:01 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:21:00 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@
 /*
 ** set_window_prop
 **
-** t_cursor*	destination struct
+** t_env*	destination struct
 */
 
-void		set_window_prop(t_cursor *dest)
+void		set_window_prop(t_env *dest)
 {
 	ft_bzero(&dest->ws, sizeof(struct winsize));
 	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
@@ -42,10 +42,10 @@ void		set_window_prop(t_cursor *dest)
 /*
 ** init_display
 **
-** t_cursor*	cursor
+** t_env*	cursor
 */
 
-int			init_display(t_cursor *csr)
+int			init_display(t_env *env)
 {
 	if (!outcap("ks"))
 		return (FALSE);
@@ -55,7 +55,7 @@ int			init_display(t_cursor *csr)
 	signal(SIGTSTP, (void(*)(int))&signal_hdl);
 	signal(SIGCONT, (void(*)(int))&redraw_hdl);
 	signal(SIGWINCH, (void(*)(int))&redraw_hdl);
-	set_window_prop(csr);
+	set_window_prop(env);
 	return (TRUE);
 }
 

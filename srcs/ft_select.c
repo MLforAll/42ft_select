@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:04:46 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/21 02:23:41 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,22 @@
 ** char**		arguments of prgm aka av + 1
 */
 
-static size_t	get_choices(t_choice **dest, t_cursor *csr, char **args)
+static size_t	get_choices(t_env *env, char **args)
 {
 	size_t		ret;
 	t_choice	*new;
 
-	if (!dest)
+	if (!env)
 		return (0);
 	ret = 0;
-	*dest = NULL;
+	env->choices = NULL;
 	while (*args)
 	{
 		if (!(new = ft_chnew(*args, NO)))
 			return (0);
-		if (new->titlelen > csr->mlen)
-			csr->mlen = new->titlelen;
-		ft_chpush(dest, new);
+		if (new->titlelen > env->mlen)
+			env->mlen = new->titlelen;
+		ft_chpush(&env->choices, new);
 		args++;
 		ret++;
 	}
@@ -110,29 +110,27 @@ static void		fill_tcdb(const char *app_name)
 
 int				main(int ac, char **av)
 {
-	t_choice	*choices;
-	t_cursor	csr;
+	t_env		env;
 	t_tkeys		kcmps;
 	int			show_res;
 	char		vsusp_char;
 
 	vsusp_char = 0;
-	ft_bzero(&csr, sizeof(t_cursor));
+	ft_bzero(&env, sizeof(t_env));
 	if (!isatty(FT_OUT_FD))
 		fatal(av[0], "Invalid output fd");
 	if (!set_signals() || !init_restore_terminal(YES, &vsusp_char))
 		fatal(av[0], "Init error");
 	signal_hdl(vsusp_char);
-	redraw_hdl((unsigned long long)&choices);
-	redraw_hdl((unsigned long long)&csr);
+	redraw_hdl((unsigned long long)&env);
 	fill_tcdb(av[0]);
-	if (ac == 1 || !(csr.max = get_choices(&choices, &csr, av + 1)))
+	if (ac == 1 || !(env.max = get_choices(&env, av + 1)))
 		fatal(av[0], "Missing arguments or malloc error");
-	if (!init_display(&csr) || !fill_kcmps(&kcmps))
+	if (!init_display(&env) || !fill_kcmps(&kcmps))
 		fatal(av[0], "Error setting display");
-	show_res = chk_keys(&choices, &csr, &kcmps);
+	show_res = chk_keys(&env, &kcmps);
 	init_restore_terminal(NO, NULL);
-	(show_res && !isatty(STDOUT_FILENO)) ? return_res(choices) : 0;
-	ft_chdel(&choices);
+	(show_res && !isatty(STDOUT_FILENO)) ? return_res(env.choices) : 0;
+	ft_chdel(&env.choices);
 	return (EXIT_SUCCESS);
 }

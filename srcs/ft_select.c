@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 08:43:01 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 13:47:11 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,22 @@ static void		fill_tcdb(const char *app_name)
 }
 
 /*
+** fatal
+**
+** const char*	app's name
+** const char*	error message
+*/
+
+static void		fatal(const char *app, const char *err)
+{
+	init_restore_terminal(NO, NULL);
+	ft_putstr_fd(app, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putendl_fd(err, STDERR_FILENO);
+	exit(EXIT_FAILURE);
+}
+
+/*
 ** main
 **
 ** int			number of args from shell
@@ -125,7 +141,7 @@ int				main(int ac, char **av)
 	redraw_hdl((unsigned long long)&env);
 	fill_tcdb(av[0]);
 	if (ac == 1 || !get_choices(&env, av + 1))
-		fatal(av[0], "Missing arguments or malloc error");
+		fatal(av[0], (ac == 1) ? "Missing arguments" : "malloc() error");
 	if (!init_restore_display(&env, YES) || !fill_kcmps(&kcmps))
 		fatal(av[0], "Error setting display");
 	show_res = chk_keys(&env, &kcmps);

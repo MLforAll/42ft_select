@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 09:28:44 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 13:46:46 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,11 +104,15 @@ int			set_read_timeout(cc_t timeout, struct termios *tptr)
 
 int			init_restore_terminal(int init, char *vsusp_ptr)
 {
+	static int				init;
 	static struct termios	saved_t;
 	struct termios			t;
 
 	if (!init)
+	{
+		init = FALSE;
 		return (tcsetattr(FT_OUT_FD, TCSADRAIN, &saved_t) == -1 ? FALSE : TRUE);
+	}
 	if (tcgetattr(FT_OUT_FD, &saved_t) == -1)
 		return (FALSE);
 	t = saved_t;
@@ -119,5 +123,5 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 		return (FALSE);
 	if (vsusp_ptr)
 		*vsusp_ptr = saved_t.c_cc[VSUSP];
-	return (TRUE);
+	return ((init = TRUE));
 }

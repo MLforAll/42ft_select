@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 08:51:41 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 13:46:57 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,5 @@ int				ft_strasciieq(char *s, char c);
 int				putcf(int c);
 int				outcap(char *name);
 int				movcap(unsigned int x, unsigned int y);
-void			fatal(const char *app, const char *err);
 
 #endif

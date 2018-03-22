@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 01:42:06 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 14:22:21 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,12 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "ft_select.h"
+
+/*
+** delete_curr_elem
+**
+** t_env*		environement
+*/
 
 static void	delete_curr_elem(t_env *env)
 {
@@ -32,6 +38,12 @@ static void	delete_curr_elem(t_env *env)
 	set_window_prop(env);
 }
 
+/*
+** select_curr_elem
+**
+** t_env*		environement
+*/
+
 static void	select_curr_elem(t_env *env)
 {
 	t_choice		*bw;
@@ -41,11 +53,16 @@ static void	select_curr_elem(t_env *env)
 	if (!(bw = ft_chgetidx(env->choices, env->pos)))
 		return ;
 	bw->selected = !bw->selected;
-	if (env->ncols > 1)
-		mov_right(env);
-	else
-		mov_down(env);
+	(env->ncols > 1) ? mov_right(env) : mov_down(env);
 }
+
+/*
+** interact
+**
+** char*		keys read
+** t_tkeys*		keypad keys
+** t_env*		environement
+*/
 
 static int	interact(char *buff, t_tkeys *kcmps, t_env *env)
 {
@@ -74,6 +91,12 @@ static int	interact(char *buff, t_tkeys *kcmps, t_env *env)
 	return (FALSE);
 }
 
+/*
+** redraw_hdl -- redraw sig handler (when resizing)
+**
+** unsigned long long	signal code or address of env (init)
+*/
+
 void		redraw_hdl(unsigned long long sigc)
 {
 	static t_env	*env = NULL;
@@ -95,11 +118,16 @@ void		redraw_hdl(unsigned long long sigc)
 	{
 		outcap("cl");
 		set_window_prop(env);
-		env->vscroll = env->nlines * env->ncols \
-					* (env->pos / (env->nlines * env->ncols));
 	}
 	print_with_env(env);
 }
+
+/*
+** chk_keys -- routine that does interaction
+**
+** t_env*		environement
+** t_tkeys*		keypad keys
+*/
 
 int			chk_keys(t_env *env, t_tkeys *kcmps)
 {

@@ -6,13 +6,29 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 13:47:11 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 14:21:53 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include "ft_select.h"
+
+/*
+** fatal
+**
+** const char*	app's name
+** const char*	error message
+*/
+
+static void		fatal(const char *app, const char *err)
+{
+	init_restore_terminal(NO, NULL);
+	ft_putstr_fd(app, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putendl_fd(err, STDERR_FILENO);
+	exit(EXIT_FAILURE);
+}
 
 /*
 ** get_choices
@@ -99,22 +115,6 @@ static void		fill_tcdb(const char *app_name)
 	}
 	if (tgetent(NULL, termtype) <= 0)
 		fatal(app_name, "Invalid terminal");
-}
-
-/*
-** fatal
-**
-** const char*	app's name
-** const char*	error message
-*/
-
-static void		fatal(const char *app, const char *err)
-{
-	init_restore_terminal(NO, NULL);
-	ft_putstr_fd(app, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putendl_fd(err, STDERR_FILENO);
-	exit(EXIT_FAILURE);
 }
 
 /*

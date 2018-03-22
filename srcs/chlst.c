@@ -6,12 +6,19 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/08 21:48:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 02:19:49 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 14:21:28 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "ft_select.h"
+
+/*
+** ft_chnew -- create new chain
+**
+** char*	title of item
+** init		state of item
+*/
 
 t_choice	*ft_chnew(char *title, int selected)
 {
@@ -34,6 +41,13 @@ t_choice	*ft_chnew(char *title, int selected)
 	return (ret);
 }
 
+/*
+** ft_chpush -- add element to end of list
+**
+** t_choice**	head of existing list
+** t_choice*	new chain
+*/
+
 void		ft_chpush(t_choice **headref, t_choice *new)
 {
 	t_choice	*bw;
@@ -51,6 +65,13 @@ void		ft_chpush(t_choice **headref, t_choice *new)
 	new->prev = bw;
 	bw->next = new;
 }
+
+/*
+** ft_chdelone -- delete one element of list
+**
+** t_choice**	head of list
+** t_choice*	chain to del
+*/
 
 void		ft_chdelone(t_choice **headref, t_choice *ch)
 {
@@ -75,6 +96,12 @@ void		ft_chdelone(t_choice **headref, t_choice *ch)
 	free(ch);
 }
 
+/*
+** ft_chdel -- delete list
+**
+** t_choice**	head of list to del
+*/
+
 void		ft_chdel(t_choice **headref)
 {
 	t_choice	*bw;
@@ -92,6 +119,13 @@ void		ft_chdel(t_choice **headref)
 	}
 	*headref = NULL;
 }
+
+/*
+** ft_chgetidx -- get a chain by idx
+**
+** t_choice*	head of list
+** unsigned int	index of chain
+*/
 
 t_choice	*ft_chgetidx(t_choice *head, unsigned int idx)
 {

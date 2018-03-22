@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/21 11:38:23 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 15:34:37 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ void		print_with_env(t_env *env)
 	unsigned int	ccol;
 	int				scroll_sw;
 
+	if (!env)
+		return ;
 	idx = env->vscroll;
 	cline = 0;
 	choices = ft_chgetidx(env->choices, idx);
@@ -116,10 +118,8 @@ void		print_with_env(t_env *env)
 		ccol = 0;
 		while (choices && ccol < env->ncols)
 		{
-			if (print_elem(choices, env, ccol, idx))
-				scroll_sw = TRUE;
+			print_elem(choices, env, ccol, idx++) ? scroll_sw = TRUE : 0;
 			choices = choices->next;
-			idx++;
 			ccol++;
 		}
 		cline++;

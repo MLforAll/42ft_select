@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 14:21:53 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 17:15:11 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "ft_select.h"
 
 /*
-** fatal
+** fatal (private)
 **
 ** const char*	app's name
 ** const char*	error message
@@ -31,7 +31,7 @@ static void		fatal(const char *app, const char *err)
 }
 
 /*
-** get_choices
+** get_choices (private)
 **
 ** t_env*		environement
 ** char**		arguments of prgm aka av + 1
@@ -47,19 +47,22 @@ static int		get_choices(t_env *env, char **args)
 	env->choices = NULL;
 	while (*args)
 	{
-		if (!(new = ft_chnew(*args, NO)))
-			return (FALSE);
-		if (new->titlelen > env->mlen)
-			env->mlen = new->titlelen;
-		ft_chpush(&env->choices, new);
+		if (**args)
+		{
+			if (!(new = ft_chnew(*args, NO)))
+				return (FALSE);
+			if (new->titlelen > env->mlen)
+				env->mlen = new->titlelen;
+			ft_chpush(&env->choices, new);
+			env->max++;
+		}
 		args++;
-		env->max++;
 	}
-	return (TRUE);
+	return ((env->max > 0));
 }
 
 /*
-** return_res
+** return_res (private)
 **
 ** t_choice*	all choices (arguments)
 */
@@ -86,7 +89,7 @@ static void		return_res(t_choice *choices)
 }
 
 /*
-** fill_tcdb -- fill the termcap database
+** fill_tcdb -- fill the termcap database (private)
 **
 ** const char*	name of app (av[0])
 */
@@ -141,13 +144,13 @@ int				main(int ac, char **av)
 	redraw_hdl((unsigned long long)&env);
 	fill_tcdb(av[0]);
 	if (ac == 1 || !get_choices(&env, av + 1))
-		fatal(av[0], (ac == 1) ? "Missing arguments" : "malloc() error");
+		fatal(av[0], "Arguments error");
 	if (!init_restore_display(&env, YES) || !fill_kcmps(&kcmps))
 		fatal(av[0], "Error setting display");
 	show_res = chk_keys(&env, &kcmps);
 	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);
-	(show_res && !isatty(STDOUT_FILENO)) ? return_res(env.choices) : 0;
+	(show_res) ? return_res(env.choices) : 0;
 	ft_chdel(&env.choices);
 	return (EXIT_SUCCESS);
 }

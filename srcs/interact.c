@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 14:22:21 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 17:13:08 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "ft_select.h"
 
 /*
-** delete_curr_elem
+** delete_curr_elem (private)
 **
 ** t_env*		environement
 */
@@ -39,7 +39,7 @@ static void	delete_curr_elem(t_env *env)
 }
 
 /*
-** select_curr_elem
+** select_curr_elem (private)
 **
 ** t_env*		environement
 */
@@ -57,7 +57,7 @@ static void	select_curr_elem(t_env *env)
 }
 
 /*
-** interact
+** interact (private)
 **
 ** char*		keys read
 ** t_tkeys*		keypad keys
@@ -145,6 +145,7 @@ int			chk_keys(t_env *env, t_tkeys *kcmps)
 		if (rb == 0 || interact(buff, kcmps, env))
 		{
 			clear_choices(env);
+			mov_page(env);
 			print_with_env(env);
 		}
 		if ((rb > 0 && ft_strasciieq(buff, 27)) || !env->choices)

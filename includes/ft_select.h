@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 13:46:57 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 16:46:25 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 # include "libft.h"
 # include <termios.h>
 # include <term.h>
+
+/*
+** Data Structures
+*/
 
 typedef struct	s_tkeys
 {
@@ -49,6 +53,10 @@ typedef struct	s_env
 	unsigned int	scroll_off;
 }				t_env;
 
+/*
+** Macros
+*/
+
 # define FT_OUT_FD	STDIN_FILENO
 # define FT_PAD_NB	2
 
@@ -60,7 +68,7 @@ int				set_read_timeout(cc_t timeout, struct termios *tptr);
 int				init_restore_terminal(int init, char *vsusp_ptr);
 
 /*
-** Choice display
+** Display
 */
 
 void			set_window_prop(t_env *dest);
@@ -78,6 +86,7 @@ void			print_with_env(t_env *env);
 ** Interaction
 */
 
+void			mov_page(t_env *env);
 void			mov_up(t_env *env);
 void			mov_down(t_env *env);
 void			mov_left(t_env *env);

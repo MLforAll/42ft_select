@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 14:13:25 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 17:41:43 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,18 +49,25 @@ void		signal_hdl(int sigc)
 
 int			set_signals(void)
 {
-	const int		sigs[] = {SIGHUP, SIGINT, SIGQUIT, SIGTERM,
-							SIGTSTP, SIGCONT};
-	static void		(*hdls[])(int) = {&signal_hdl, &signal_hdl, &signal_hdl,
-								&signal_hdl, SIG_IGN, SIG_IGN, NULL};
-	unsigned int	idx;
+	const int		killers[] = {SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGALRM,
+								SIGTERM, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
+								SIGUSR1, SIGUSR2, 0};
+	const int		toblock[] = {SIGTSTP, SIGCONT, SIGTTIN, SIGTTOU, 0};
+	const int		*sigs[] = {killers, toblock, NULL};
+	static void		(*hdls[])(int) = {&signal_hdl, SIG_IGN, NULL};
+	unsigned int	idx[2];
 
-	idx = 0;
-	while (hdls[idx])
+	idx[0] = 0;
+	while (hdls[idx[0]] && sigs[idx[0]])
 	{
-		if (signal(sigs[idx], hdls[idx]) == SIG_ERR)
-			return (FALSE);
-		idx++;
+		idx[1] = 0;
+		while (sigs[idx[0]][idx[1]])
+		{
+			if (signal(sigs[idx[0]][idx[1]], hdls[idx[0]]) == SIG_ERR)
+				return (FALSE);
+			idx[1]++;
+		}
+		idx[0]++;
 	}
 	return (TRUE);
 }

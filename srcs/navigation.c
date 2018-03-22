@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 21:29:38 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 18:50:43 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 19:10:09 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	mov_page(t_env *env)
 /*
 ** mov_up -- up key
 **
+** char*		keys read
 ** t_env*		environement
 */
 
@@ -49,6 +50,7 @@ void	mov_up(char *buff, t_env *env)
 /*
 ** mov_down -- down key
 **
+** char*		keys read
 ** t_env*		environement
 */
 
@@ -66,6 +68,7 @@ void	mov_down(char *buff, t_env *env)
 /*
 ** mov_left -- left key
 **
+** char*		keys read
 ** t_env*		environement
 */
 
@@ -80,6 +83,7 @@ void	mov_left(char *buff, t_env *env)
 /*
 ** mov_right -- right key
 **
+** char*		keys read
 ** t_env*		environement
 */
 

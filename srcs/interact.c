@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 19:09:19 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 19:10:11 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 /*
 ** delete_curr_elem (private)
 **
+** char*		keys read
 ** t_env*		environement
 */
 
@@ -42,6 +43,7 @@ static void	delete_curr_elem(char *buff, t_env *env)
 /*
 ** select_curr_elem (private)
 **
+** char*		keys read
 ** t_env*		environement
 */
 

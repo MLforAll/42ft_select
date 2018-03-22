@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 17:13:08 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 19:09:19 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 ** t_env*		environement
 */
 
-static void	delete_curr_elem(t_env *env)
+static void	delete_curr_elem(char *buff, t_env *env)
 {
 	t_choice		*tmp;
 
@@ -32,7 +32,8 @@ static void	delete_curr_elem(t_env *env)
 	ft_chdelone(&env->choices, tmp);
 	if (env->pos > 0)
 	{
-		env->pos--;
+		env->pos -= (ft_strequ(buff, env->kcmps.bksp)
+					|| env->pos >= env->max - 1);
 		env->max--;
 	}
 	set_window_prop(env);
@@ -44,46 +45,44 @@ static void	delete_curr_elem(t_env *env)
 ** t_env*		environement
 */
 
-static void	select_curr_elem(t_env *env)
+static void	select_curr_elem(char *buff, t_env *env)
 {
 	t_choice		*bw;
 
+	(void)buff;
 	if (!env)
 		return ;
 	if (!(bw = ft_chgetidx(env->choices, env->pos)))
 		return ;
 	bw->selected = !bw->selected;
-	(env->ncols > 1) ? mov_right(env) : mov_down(env);
+	(env->ncols > 1) ? mov_right(buff, env) : mov_down(buff, env);
 }
 
 /*
 ** interact (private)
 **
 ** char*		keys read
-** t_tkeys*		keypad keys
 ** t_env*		environement
 */
 
-static int	interact(char *buff, t_tkeys *kcmps, t_env *env)
+static int	interact(char *buff, t_env *env)
 {
-	const char		*kbuffs[] = {kcmps->upk, kcmps->downk,
-								kcmps->leftk, kcmps->rightk, " ",
-								kcmps->delk, kcmps->bsk, NULL};
-	static void		(*kfuncs[])(t_env *) = {&mov_up,
+	const char		*kbuffs[] = {env->kcmps.upk, env->kcmps.downk,
+								env->kcmps.leftk, env->kcmps.rightk, " ",
+								env->kcmps.delk, env->kcmps.bksp, NULL};
+	static void		(*kfuncs[])(char *, t_env *) = {&mov_up,
 								&mov_down, &mov_left, &mov_right,
 								&select_curr_elem, &delete_curr_elem,
 								&delete_curr_elem, NULL};
 	unsigned int	idx;
 
-	if (!env || !kcmps)
-		return (FALSE);
 	env->scroll_off = 0;
 	idx = 0;
 	while (kbuffs[idx])
 	{
 		if (ft_strequ(buff, kbuffs[idx]))
 		{
-			(kfuncs[idx])(env);
+			(kfuncs[idx])(buff, env);
 			return (TRUE);
 		}
 		idx++;
@@ -126,10 +125,9 @@ void		redraw_hdl(unsigned long long sigc)
 ** chk_keys -- routine that does interaction
 **
 ** t_env*		environement
-** t_tkeys*		keypad keys
 */
 
-int			chk_keys(t_env *env, t_tkeys *kcmps)
+int			chk_keys(t_env *env)
 {
 	char			buff[5];
 	ssize_t			rb;
@@ -142,7 +140,7 @@ int			chk_keys(t_env *env, t_tkeys *kcmps)
 	{
 		if (rb > 0 && (ft_strequ(buff, "\n") || ft_strasciieq(buff, 4)))
 			break ;
-		if (rb == 0 || interact(buff, kcmps, env))
+		if (rb == 0 || interact(buff, env))
 		{
 			clear_choices(env);
 			mov_page(env);

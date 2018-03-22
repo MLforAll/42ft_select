@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 16:44:58 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 19:07:10 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,8 @@ int			fill_kcmps(t_tkeys *dest)
 	dest->downk = tgetstr("kd", NULL);
 	dest->leftk = tgetstr("kl", NULL);
 	dest->delk = tgetstr("kD", NULL);
-	(dest->bsk)[0] = 127;
-	(dest->bsk)[1] = '\0';
+	(dest->bksp)[0] = 127;
+	(dest->bksp)[1] = '\0';
 	return ((dest->rightk && dest->upk && dest->downk
 			&& dest->leftk && dest->delk));
 }

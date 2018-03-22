@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 16:46:25 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 18:55:52 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ typedef struct	s_tkeys
 	char			*upk;
 	char			*downk;
 	char			*delk;
-	char			bsk[2];
+	char			bksp[2];
 }				t_tkeys;
 
 typedef struct	s_choice
@@ -46,6 +46,7 @@ typedef struct	s_env
 	unsigned long	pos;
 	size_t			max;
 	size_t			mlen;
+	t_tkeys			kcmps;
 	struct winsize	ws;
 	size_t			nlines;
 	size_t			ncols;
@@ -87,11 +88,11 @@ void			print_with_env(t_env *env);
 */
 
 void			mov_page(t_env *env);
-void			mov_up(t_env *env);
-void			mov_down(t_env *env);
-void			mov_left(t_env *env);
-void			mov_right(t_env *env);
-int				chk_keys(t_env *env, t_tkeys *kcmps);
+void			mov_up(char *buff, t_env *env);
+void			mov_down(char *buff, t_env *env);
+void			mov_left(char *buff, t_env *env);
+void			mov_right(char *buff, t_env *env);
+int				chk_keys(t_env *env);
 
 /*
 ** Signals

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 17:15:11 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/22 18:55:34 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,6 @@ static void		fill_tcdb(const char *app_name)
 int				main(int ac, char **av)
 {
 	t_env		env;
-	t_tkeys		kcmps;
 	int			show_res;
 	char		vsusp_char;
 
@@ -145,9 +144,9 @@ int				main(int ac, char **av)
 	fill_tcdb(av[0]);
 	if (ac == 1 || !get_choices(&env, av + 1))
 		fatal(av[0], "Arguments error");
-	if (!init_restore_display(&env, YES) || !fill_kcmps(&kcmps))
+	if (!init_restore_display(&env, YES) || !fill_kcmps(&env.kcmps))
 		fatal(av[0], "Error setting display");
-	show_res = chk_keys(&env, &kcmps);
+	show_res = chk_keys(&env);
 	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);
 	(show_res) ? return_res(env.choices) : 0;

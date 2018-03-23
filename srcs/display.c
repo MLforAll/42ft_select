@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 18:11:48 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 22:01:30 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ void			set_window_prop(t_env *dest)
 		bw = bw->next;
 	}
 	ft_bzero(&dest->ws, sizeof(struct winsize));
-	ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws);
+	if (ioctl(FT_OUT_FD, TIOCGWINSZ, &dest->ws) == -1)
+		fatal(FT_APP_NAME, "ioctl() failure");
 	if (dest->max < dest->ws.ws_row || dest->mlen > dest->ws.ws_col
 		|| dest->mlen <= 0)
 		dest->ncols = 1;

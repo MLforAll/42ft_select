@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 19:01:15 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 22:04:03 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 	if (!(sigret = set_signals()))
 		ft_putendl_fd("Signals couldn't be caught.", STDERR_FILENO);
 	t = saved_t;
-	t.c_lflag &= ~(ICANON | ECHO | ((!sigret) ? ISIG : 0));
+	t.c_lflag &= ~(ICANON | ECHO | ((!sigret || !isatty(1)) ? ISIG : 0));
 	t.c_oflag &= ~OPOST;
 	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)

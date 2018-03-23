@@ -6,29 +6,13 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 18:55:34 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 21:00:53 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include "ft_select.h"
-
-/*
-** fatal (private)
-**
-** const char*	app's name
-** const char*	error message
-*/
-
-static void		fatal(const char *app, const char *err)
-{
-	init_restore_terminal(NO, NULL);
-	ft_putstr_fd(app, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putendl_fd(err, STDERR_FILENO);
-	exit(EXIT_FAILURE);
-}
 
 /*
 ** get_choices (private)
@@ -90,16 +74,15 @@ static void		return_res(t_choice *choices)
 
 /*
 ** fill_tcdb -- fill the termcap database (private)
-**
-** const char*	name of app (av[0])
 */
 
-static void		fill_tcdb(const char *app_name)
+static void		fill_tcdb(void)
 {
 	char		*termtype;
 	char		ans;
+	char		*tmp;
 
-	ans = '\0';
+	ans = 0;
 	if (!(termtype = getenv("TERM")))
 	{
 		ft_putstr_fd("TERM env var not found.\r\n", FT_OUT_FD);
@@ -107,17 +90,19 @@ static void		fill_tcdb(const char *app_name)
 		{
 			ft_putstr_fd("Use default value ? (y/N) ", FT_OUT_FD);
 			if (read(FT_OUT_FD, &ans, 1) < 1)
-				fatal(app_name, "\nwrite error");
+				fatal(FT_APP_NAME, "\nwrite error");
 			ft_putstr_fd("\r\n", FT_OUT_FD);
 			ans = ft_tolower(ans);
 			if (ans == 'y')
 				termtype = "xterm";
 			else if (ans == 'n')
-				fatal(app_name, "User canceled the operation");
+				fatal(FT_APP_NAME, "User canceled the operation");
 		}
 	}
 	if (tgetent(NULL, termtype) <= 0)
-		fatal(app_name, "Invalid terminal");
+		fatal(FT_APP_NAME, "Invalid terminal");
+	tmp = tgetstr("pc", NULL);
+	PC = (tmp) ? *tmp : 0;
 }
 
 /*
@@ -136,16 +121,16 @@ int				main(int ac, char **av)
 	vsusp_char = 0;
 	ft_bzero(&env, sizeof(t_env));
 	if (!isatty(FT_OUT_FD))
-		fatal(av[0], "Invalid output fd");
-	if (!set_signals() || !init_restore_terminal(YES, &vsusp_char))
-		fatal(av[0], "Init error");
+		fatal(FT_APP_NAME, "Invalid output fd");
+	if (ac == 1 || !get_choices(&env, av + 1))
+		fatal(FT_APP_NAME, "Arguments error");
+	if (!init_restore_terminal(YES, &vsusp_char))
+		fatal(FT_APP_NAME, "Init error");
 	signal_hdl(vsusp_char);
 	redraw_hdl((unsigned long long)&env);
-	fill_tcdb(av[0]);
-	if (ac == 1 || !get_choices(&env, av + 1))
-		fatal(av[0], "Arguments error");
-	if (!init_restore_display(&env, YES) || !fill_kcmps(&env.kcmps))
-		fatal(av[0], "Error setting display");
+	fill_tcdb();
+	if (!init_restore_display(&env, YES))
+		fatal(FT_APP_NAME, "Error setting display");
 	show_res = chk_keys(&env);
 	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);

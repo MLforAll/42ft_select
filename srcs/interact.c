@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 19:10:11 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 18:54:14 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ void		redraw_hdl(unsigned long long sigc)
 		return ;
 	if (sigc == SIGCONT)
 	{
-		set_signals();
 		init_restore_terminal(YES, NULL);
 		init_restore_display(env, YES);
 	}
@@ -140,7 +139,8 @@ int			chk_keys(t_env *env)
 	ft_bzero(buff, sizeof(buff));
 	while ((rb = read(FT_OUT_FD, buff, 4)) != -1)
 	{
-		if (rb > 0 && (ft_strequ(buff, "\n") || ft_strasciieq(buff, 4)))
+		if (rb > 0 && (ft_strequ(buff, "\n")
+			|| ft_strasciieq(buff, 4) || ft_strasciieq(buff, 3)))
 			break ;
 		if (rb == 0 || interact(buff, env))
 		{

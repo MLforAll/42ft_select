@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 17:41:43 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 19:01:15 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,25 @@ int			set_signals(void)
 								SIGTERM, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
 								SIGUSR1, SIGUSR2, 0};
 	const int		toblock[] = {SIGTSTP, SIGCONT, SIGTTIN, SIGTTOU, 0};
-	const int		*sigs[] = {killers, toblock, NULL};
-	static void		(*hdls[])(int) = {&signal_hdl, SIG_IGN, NULL};
-	unsigned int	idx[2];
+	unsigned int	idx;
+	int				success;
 
-	idx[0] = 0;
-	while (hdls[idx[0]] && sigs[idx[0]])
+	idx = 0;
+	success = 1;
+	while (killers[idx])
 	{
-		idx[1] = 0;
-		while (sigs[idx[0]][idx[1]])
-		{
-			if (signal(sigs[idx[0]][idx[1]], hdls[idx[0]]) == SIG_ERR)
-				return (FALSE);
-			idx[1]++;
-		}
-		idx[0]++;
+		if (signal(killers[idx], &signal_hdl) == SIG_ERR)
+			success = 0;
+		idx++;
 	}
-	return (TRUE);
+	idx = 0;
+	while (toblock[idx])
+	{
+		if (signal(toblock[idx], SIG_IGN) == SIG_ERR)
+			success = 0;
+		idx++;
+	}
+	return (success);
 }
 
 /*
@@ -114,6 +116,7 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 	static int				is_init = FALSE;
 	static struct termios	saved_t;
 	struct termios			t;
+	int						sigret;
 
 	if (!init)
 	{
@@ -124,8 +127,10 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 	}
 	if (is_init || tcgetattr(FT_OUT_FD, &saved_t) == -1)
 		return (FALSE);
+	if (!(sigret = set_signals()))
+		ft_putendl_fd("Signals couldn't be caught.", STDERR_FILENO);
 	t = saved_t;
-	t.c_lflag &= ~(ICANON | ECHO);
+	t.c_lflag &= ~(ICANON | ECHO | ((!sigret) ? ISIG : 0));
 	t.c_oflag &= ~OPOST;
 	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)

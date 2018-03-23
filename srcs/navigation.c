@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/16 21:29:38 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 19:10:09 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 17:50:52 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 
 void	mov_page(t_env *env)
 {
+	if (env->nlines == 0 || env->ncols == 0)
+		return ;
 	env->vscroll = env->nlines * env->ncols \
 					* (env->pos / (env->nlines * env->ncols));
 	if (env->vscroll >= env->max)

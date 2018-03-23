@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 13:42:58 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 18:05:42 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,23 @@ int		movcap(unsigned int x, unsigned int y)
 		return (FALSE);
 	tputs(gotostr, 1, &putcf);
 	return (TRUE);
+}
+
+/*
+** fatal
+**
+** const char*	app's name
+** const char*	error message
+*/
+
+void	fatal(const char *app, const char *err)
+{
+	init_restore_terminal(NO, NULL);
+	if (app)
+	{
+		ft_putstr_fd(app, STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+	}
+	ft_putendl_fd(err, STDERR_FILENO);
+	exit(EXIT_FAILURE);
 }

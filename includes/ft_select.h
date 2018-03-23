@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 18:55:52 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 19:01:18 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "libft.h"
 # include <termios.h>
-# include <term.h>
+# include <termcap.h>
 
 /*
 ** Data Structures
@@ -58,8 +58,9 @@ typedef struct	s_env
 ** Macros
 */
 
-# define FT_OUT_FD	STDIN_FILENO
-# define FT_PAD_NB	2
+# define FT_APP_NAME	"ft_select"
+# define FT_OUT_FD		STDIN_FILENO
+# define FT_PAD_NB		2
 
 /*
 ** Set/Restore Terminal
@@ -73,7 +74,6 @@ int				init_restore_terminal(int init, char *vsusp_ptr);
 */
 
 void			set_window_prop(t_env *dest);
-int				fill_kcmps(t_tkeys *dest);
 int				init_restore_display(t_env *env, int init);
 
 /*
@@ -120,5 +120,6 @@ int				ft_strasciieq(char *s, char c);
 int				putcf(int c);
 int				outcap(char *name);
 int				movcap(unsigned int x, unsigned int y);
+void			fatal(const char *app, const char *err);
 
 #endif

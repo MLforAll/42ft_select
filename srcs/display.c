@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/22 19:07:10 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/23 18:11:48 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 ** t_env*	destination struct
 */
 
-void		set_window_prop(t_env *dest)
+void			set_window_prop(t_env *dest)
 {
 	t_choice	*bw;
 
@@ -51,41 +51,12 @@ void		set_window_prop(t_env *dest)
 }
 
 /*
-** init_display
-**
-** t_env*	cursor
-*/
-
-int			init_restore_display(t_env *env, int init)
-{
-	if (!init)
-	{
-		outcap("ve");
-		outcap("ke");
-		outcap("te");
-		return (TRUE);
-	}
-	if (!env)
-		return (FALSE);
-	if (!outcap("ks"))
-		return (FALSE);
-	if (!outcap("ti") && !outcap("cl"))
-		return (FALSE);
-	outcap("vi");
-	signal(SIGTSTP, (void(*)(int))&signal_hdl);
-	signal(SIGCONT, (void(*)(int))&redraw_hdl);
-	signal(SIGWINCH, (void(*)(int))&redraw_hdl);
-	set_window_prop(env);
-	return (TRUE);
-}
-
-/*
-** fill_kcmps
+** fill_kcmps (private)
 **
 ** t_tkeys*		struct containing term movkeys caps
 */
 
-int			fill_kcmps(t_tkeys *dest)
+static int		fill_kcmps(t_tkeys *dest)
 {
 	if (!dest)
 		return (FALSE);
@@ -97,5 +68,34 @@ int			fill_kcmps(t_tkeys *dest)
 	(dest->bksp)[0] = 127;
 	(dest->bksp)[1] = '\0';
 	return ((dest->rightk && dest->upk && dest->downk
-			&& dest->leftk && dest->delk));
+			&& dest->leftk));
+}
+
+/*
+** init_display
+**
+** t_env*	cursor
+*/
+
+int				init_restore_display(t_env *env, int init)
+{
+	if (!init)
+	{
+		outcap("ve");
+		outcap("ke");
+		outcap("te");
+		return (TRUE);
+	}
+	if (!env || !fill_kcmps(&env->kcmps))
+		return (FALSE);
+	if (!outcap("ks"))
+		return (FALSE);
+	if (!outcap("ti") && !outcap("cl"))
+		return (FALSE);
+	outcap("vi");
+	signal(SIGTSTP, (void(*)(int))&signal_hdl);
+	signal(SIGCONT, (void(*)(int))&redraw_hdl);
+	signal(SIGWINCH, (void(*)(int))&redraw_hdl);
+	set_window_prop(env);
+	return (TRUE);
 }

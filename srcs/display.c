@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 22:01:30 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 12:21:05 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ int				init_restore_display(t_env *env, int init)
 	{
 		outcap("ve");
 		outcap("ke");
-		outcap("te");
+		if (!outcap("te"))
+			outcap("cl");
 		return (TRUE);
 	}
 	if (!env || !fill_kcmps(&env->kcmps))

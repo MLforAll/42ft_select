@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 18:05:42 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 12:19:54 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int		movcap(unsigned int x, unsigned int y)
 
 void	fatal(const char *app, const char *err)
 {
+	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);
 	if (app)
 	{

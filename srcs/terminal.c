@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 13:44:43 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 14:50:43 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,10 @@ void		signal_hdl(int sigc)
 
 int			set_signals(void)
 {
-	const int		killers[] = {SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGALRM,
+	const int		killers[13] = {SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGALRM,
 								SIGTERM, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
 								SIGUSR1, SIGUSR2, 0};
-	const int		toblock[] = {SIGTSTP, SIGCONT, SIGTTIN, SIGTTOU, 0};
+	const int		toblock[5] = {SIGTSTP, SIGCONT, SIGTTIN, SIGTTOU, 0};
 	unsigned int	idx;
 	int				success;
 

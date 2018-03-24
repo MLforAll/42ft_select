@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 13:40:54 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 14:37:42 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void		clear_choices(t_env *env)
 /*
 ** print_padding -- print choice padding (private)
 **
-** t_choice*	choice to print
+** t_choice*	current choice
 ** t_env*		environnement
 */
 
@@ -58,6 +58,23 @@ static void	print_padding(t_choice *ch, t_env *env)
 }
 
 /*
+** add_color (private)
+**
+** t_choice*	current choice
+** t_env*		environnement
+*/
+
+static int	add_color(t_choice *ch, t_env *env)
+{
+	if (env->support_colors < 8 || ch->color < 1 || ch->color > 9)
+		return (FALSE);
+	ft_putstr_fd("\033[0;", FT_OUT_FD);
+	ft_putnbr_fd(ch->color + 30, FT_OUT_FD);
+	ft_putchar_fd('m', FT_OUT_FD);
+	return (TRUE);
+}
+
+/*
 ** print_elem -- print choice (private)
 **
 ** t_choice*	choice to print
@@ -71,15 +88,15 @@ static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
 	size_t			len;
 	unsigned int	off;
 	int				scroll;
+	int				colors;
 
 	if (!ch || !ch->title || !env)
 		return (FALSE);
 	if (ccol > 0)
 		print_padding(ch, env);
-	if (env->pos == idx)
-		outcap("us");
-	if (ch->selected)
-		outcap("mr");
+	colors = add_color(ch, env);
+	(env->pos == idx) ? outcap("us") : 0;
+	(ch->selected) ? outcap("mr") : 0;
 	scroll = (env->pos == idx && ch->titlelen > env->ws.ws_col);
 	len = (ch->titlelen > env->ws.ws_col) ? env->ws.ws_col : ch->titlelen;
 	off = (scroll) ? env->scroll_off : 0;
@@ -90,6 +107,7 @@ static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
 						: env->scroll_off + 1;
 	if (ch->selected || env->pos == idx)
 		outcap("me");
+	(colors) ? ft_putstr_fd("\033[0;39m", FT_OUT_FD) : 0;
 	return (scroll);
 }
 

@@ -6,13 +6,39 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 13:58:59 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 14:50:06 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include "ft_select.h"
+
+/*
+** set_color (private)
+**
+** char*		path
+*/
+
+static int		set_color(char *path)
+{
+	struct stat		st;
+	const int		types[5] = {S_IFDIR, S_IFREG, S_IFLNK, S_IFSOCK, 0};
+	const int		ids[4] = {3, 2, 5, 6};
+	unsigned int	idx;
+
+	if (lstat(path, &st) == -1)
+		return (0);
+	idx = 0;
+	while (types[idx])
+	{
+		if ((st.st_mode & S_IFMT) == types[idx])
+			return (ids[idx]);
+		idx++;
+	}
+	return (0);
+}
 
 /*
 ** get_choices (private)
@@ -35,6 +61,7 @@ static int		get_choices(t_env *env, char **args)
 		{
 			if (!(new = ft_chnew(*args, NO)))
 				return (FALSE);
+			new->color = set_color(*args);
 			if (new->titlelen > env->mlen)
 				env->mlen = new->titlelen;
 			ft_chpush(&env->choices, new);
@@ -78,9 +105,9 @@ static void		return_res(t_choice *choices)
 
 static void		fill_tcdb(void)
 {
-	char		*termtype;
-	char		ans[4];
-	char		*tmp;
+	char			*termtype;
+	char			ans[4];
+	char			*tmp;
 
 	*ans = 0;
 	if (!(termtype = getenv("TERM")))
@@ -114,9 +141,9 @@ static void		fill_tcdb(void)
 
 int				main(int ac, char **av)
 {
-	t_env		env;
-	int			show_res;
-	char		vsusp_char;
+	t_env			env;
+	int				show_res;
+	char			vsusp_char;
 
 	vsusp_char = 0;
 	ft_bzero(&env, sizeof(t_env));

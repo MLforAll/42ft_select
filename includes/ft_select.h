@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 13:39:26 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 14:25:02 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef struct	s_choice
 	int				selected;
 	char			*title;
 	size_t			titlelen;
+	int				color;
 	struct s_choice	*next;
 	struct s_choice	*prev;
 }				t_choice;
@@ -52,6 +53,7 @@ typedef struct	s_env
 	size_t			ncols;
 	unsigned int	vscroll;
 	unsigned int	scroll_off;
+	int				support_colors;
 }				t_env;
 
 /*

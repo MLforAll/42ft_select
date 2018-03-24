@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 18:54:14 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 14:53:26 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@ static void	select_curr_elem(char *buff, t_env *env)
 
 static int	interact(char *buff, t_env *env)
 {
-	const char		*kbuffs[] = {env->kcmps.upk, env->kcmps.downk,
+	const char		*kbuffs[8] = {env->kcmps.upk, env->kcmps.downk,
 								env->kcmps.leftk, env->kcmps.rightk, " ",
 								env->kcmps.delk, env->kcmps.bksp, NULL};
-	static void		(*kfuncs[])(char *, t_env *) = {&mov_up,
+	static void		(*kfuncs[8])(char *, t_env *) = {&mov_up,
 								&mov_down, &mov_left, &mov_right,
 								&select_curr_elem, &delete_curr_elem,
 								&delete_curr_elem, NULL};

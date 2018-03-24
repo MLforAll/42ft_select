@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 12:19:54 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 13:39:22 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 ** int		char
 */
 
-int		ft_strasciieq(char *s, char c)
+int			ft_strasciieq(char *s, char c)
 {
 	if (!s || *s != c)
 		return (FALSE);
@@ -34,12 +34,12 @@ int		ft_strasciieq(char *s, char c)
 }
 
 /*
-** putcf
+** putcf (private)
 **
 ** int		char to print
 */
 
-int		putcf(int c)
+static int	putcf(int c)
 {
 	write(FT_OUT_FD, &c, 1);
 	return (1);
@@ -51,7 +51,7 @@ int		putcf(int c)
 ** char*		name of termcap
 */
 
-int		outcap(char *name)
+int			outcap(char *name)
 {
 	char	*cap;
 
@@ -69,7 +69,7 @@ int		outcap(char *name)
 ** unsigned int		y position
 */
 
-int		movcap(unsigned int x, unsigned int y)
+int			movcap(unsigned int x, unsigned int y)
 {
 	const char		*cmstr = tgetstr("cm", NULL);
 	char			*gotostr;
@@ -87,7 +87,7 @@ int		movcap(unsigned int x, unsigned int y)
 ** const char*	error message
 */
 
-void	fatal(const char *app, const char *err)
+void		fatal(const char *app, const char *err)
 {
 	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);

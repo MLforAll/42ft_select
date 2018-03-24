@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 12:23:47 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 13:44:43 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int			set_read_timeout(cc_t timeout, struct termios *tptr)
 	static int				noget = FALSE;
 	static struct termios	t;
 	struct termios			*dest;
+	int						new_vmin;
 
 	if (!tptr)
 	{
@@ -97,7 +98,10 @@ int			set_read_timeout(cc_t timeout, struct termios *tptr)
 	}
 	else
 		dest = tptr;
-	dest->c_cc[VMIN] = (timeout == 0) ? 1 : 0;
+	new_vmin = (timeout == 0) ? 1 : 0;
+	if (dest->c_cc[VTIME] == timeout && dest->c_cc[VMIN] == new_vmin)
+		return (TRUE);
+	dest->c_cc[VMIN] = new_vmin;
 	dest->c_cc[VTIME] = timeout;
 	if (!tptr && tcsetattr(FT_OUT_FD, TCSADRAIN, dest) == -1)
 		return (FALSE);

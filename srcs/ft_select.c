@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 21:00:53 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 13:58:59 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,23 +79,23 @@ static void		return_res(t_choice *choices)
 static void		fill_tcdb(void)
 {
 	char		*termtype;
-	char		ans;
+	char		ans[4];
 	char		*tmp;
 
-	ans = 0;
+	*ans = 0;
 	if (!(termtype = getenv("TERM")))
 	{
 		ft_putstr_fd("TERM env var not found.\r\n", FT_OUT_FD);
-		while (ans != 'y')
+		while (*ans != 'y')
 		{
-			ft_putstr_fd("Use default value ? (y/N) ", FT_OUT_FD);
-			if (read(FT_OUT_FD, &ans, 1) < 1)
-				fatal(FT_APP_NAME, "\nwrite error");
+			ft_putstr_fd("Use default value (vt100) ? (y/N) ", FT_OUT_FD);
+			if (read(STDIN_FILENO, ans, 4) < 1)
+				fatal(FT_APP_NAME, "write error");
 			ft_putstr_fd("\r\n", FT_OUT_FD);
-			ans = ft_tolower(ans);
-			if (ans == 'y')
-				termtype = "xterm";
-			else if (ans == 'n')
+			*ans = ft_tolower(*ans);
+			if (*ans == 'y')
+				termtype = "vt100";
+			else if (*ans == 'n' || *ans == '\n')
 				fatal(FT_APP_NAME, "User canceled the operation");
 		}
 	}

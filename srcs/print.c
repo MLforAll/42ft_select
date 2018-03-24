@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 13:24:56 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 13:40:54 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,10 @@ static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
 		return (FALSE);
 	if (ccol > 0)
 		print_padding(ch, env);
-	(env->pos == idx) ? outcap("us") : 0;
-	(ch->selected) ? outcap("mr") : 0;
+	if (env->pos == idx)
+		outcap("us");
+	if (ch->selected)
+		outcap("mr");
 	scroll = (env->pos == idx && ch->titlelen > env->ws.ws_col);
 	len = (ch->titlelen > env->ws.ws_col) ? env->ws.ws_col : ch->titlelen;
 	off = (scroll) ? env->scroll_off : 0;

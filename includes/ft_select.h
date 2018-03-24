@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/23 19:01:18 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 13:39:26 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ t_choice		*ft_chgetidx(t_choice *head, unsigned int idx);
 */
 
 int				ft_strasciieq(char *s, char c);
-int				putcf(int c);
 int				outcap(char *name);
 int				movcap(unsigned int x, unsigned int y);
 void			fatal(const char *app, const char *err);

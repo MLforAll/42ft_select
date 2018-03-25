@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:50:43 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 16:10:36 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ void		signal_hdl(int sigc)
 }
 
 /*
-** set_signals
+** set_signals (private)
 */
 
-int			set_signals(void)
+static int	set_signals(void)
 {
 	const int		killers[13] = {SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGALRM,
 								SIGTERM, SIGXCPU, SIGXFSZ, SIGVTALRM, SIGPROF,
@@ -132,14 +132,14 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 	if (is_init || tcgetattr(FT_OUT_FD, &saved_t) == -1)
 		return (FALSE);
 	if (!(sigret = set_signals()))
-		ft_putendl_fd("Signals couldn't be caught.", STDERR_FILENO);
+		ft_putendl_fd("Some signal couldn't be caught.", STDERR_FILENO);
 	t = saved_t;
 	t.c_lflag &= ~(ICANON | ECHO | ((!sigret || !isatty(1)) ? ISIG : 0));
 	t.c_oflag &= ~OPOST;
 	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)
 		return (FALSE);
-	if (vsusp_ptr)
-		*vsusp_ptr = saved_t.c_cc[VSUSP];
+	(vsusp_ptr) ? *vsusp_ptr = saved_t.c_cc[VSUSP] : 0;
+	ospeed = (short)saved_t.c_ospeed;
 	return ((is_init = TRUE));
 }

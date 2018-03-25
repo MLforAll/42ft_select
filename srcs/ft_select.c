@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:50:06 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 15:45:31 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@
 static int		set_color(char *path)
 {
 	struct stat		st;
-	const int		types[5] = {S_IFDIR, S_IFREG, S_IFLNK, S_IFSOCK, 0};
-	const int		ids[4] = {3, 2, 5, 6};
+	const int		types[8] = {S_IFDIR, S_IFREG, S_IFLNK, S_IFCHR,
+								S_IFSOCK, S_IFBLK, S_IFWHT, 0};
+	const int		ids[7] = {3, 2, 5, 6, 4, 1, 7};
 	unsigned int	idx;
 
 	if (lstat(path, &st) == -1)

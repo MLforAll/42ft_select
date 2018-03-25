@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/19 23:36:29 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:28:50 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 15:50:03 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,9 @@ void			set_window_prop(t_env *dest)
 	if (dest->max < dest->ws.ws_row || dest->mlen > dest->ws.ws_col
 		|| dest->mlen <= 0)
 		dest->ncols = 1;
-	else
+	else if (dest->mlen + FT_PAD_NB > 0)
 		dest->ncols = dest->ws.ws_col / (dest->mlen + FT_PAD_NB);
-	if (dest->ncols <= 0)
-		dest->ncols = 1;
+	dest->ncols = (dest->ncols <= 0) ? 1 : dest->ncols;
 	dest->nlines = dest->max / dest->ncols + (dest->max % dest->ncols);
 	(dest->nlines >= dest->ws.ws_row) ? dest->nlines = dest->ws.ws_row - 1 : 0;
 	mov_page(dest);

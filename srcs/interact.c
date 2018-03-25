@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:53:26 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/25 04:38:41 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,9 @@ static void	delete_curr_elem(char *buff, t_env *env)
 		return ;
 	ft_chdelone(&env->choices, tmp);
 	if (env->pos > 0)
-	{
 		env->pos -= (ft_strequ(buff, env->kcmps.bksp)
 					|| env->pos >= env->max - 1);
-		env->max--;
-	}
+	env->max--;
 	set_window_prop(env);
 }
 

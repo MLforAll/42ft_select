@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:25:02 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/03/24 15:38:09 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ int				chk_keys(t_env *env);
 
 void			signal_hdl(int sigc);
 void			redraw_hdl(unsigned long long sigc);
-int				set_signals(void);
 
 /*
 ** List Utilities

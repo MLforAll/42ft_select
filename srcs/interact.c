@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 22:55:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/25 04:38:41 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:31:24 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,8 @@ int			chk_keys(t_env *env)
 		}
 		if ((rb > 0 && ft_strasciieq(buff, 27)) || !env->choices)
 			return (FALSE);
-		(rb > 0) ? ft_bzero(buff, sizeof(buff)) : 0;
+		if (rb > 0)
+			ft_bzero(buff, sizeof(buff));
 	}
 	return (TRUE);
 }

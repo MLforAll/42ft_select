@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:24:55 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 15:45:31 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:27:11 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ static void		fill_tcdb(void)
 			if (read(STDIN_FILENO, ans, 4) < 1)
 				fatal(FT_APP_NAME, "write error");
 			ft_putstr_fd("\r\n", FT_OUT_FD);
-			*ans = ft_tolower(*ans);
+			*ans = (char)ft_tolower(*ans);
 			if (*ans == 'y')
 				termtype = "vt100";
 			else if (*ans == 'n' || *ans == '\n')
@@ -162,7 +162,8 @@ int				main(int ac, char **av)
 	show_res = chk_keys(&env);
 	init_restore_display(NULL, NO);
 	init_restore_terminal(NO, NULL);
-	(show_res) ? return_res(env.choices) : 0;
+	if (show_res)
+		return_res(env.choices);
 	ft_chdel(&env.choices);
 	return (EXIT_SUCCESS);
 }

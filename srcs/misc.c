@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:50:49 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:22:12 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:40:13 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int			outcap(char *name)
 ** unsigned int		y position
 */
 
-int			movcap(unsigned int x, unsigned int y)
+int			movcap(int x, int y)
 {
 	const char		*cmstr = tgetstr("cm", NULL);
 	char			*gotostr;

@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/08 21:48:16 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:39:39 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:30:40 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void		ft_chdel(t_choice **headref)
 ** unsigned int	index of chain
 */
 
-t_choice	*ft_chgetidx(t_choice *head, unsigned int idx)
+t_choice	*ft_chgetidx(t_choice *head, unsigned long idx)
 {
 	while (head && idx--)
 		head = head->next;

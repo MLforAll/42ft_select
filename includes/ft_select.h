@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/05 18:28:15 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 15:38:09 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:41:13 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,14 @@ typedef struct	s_tkeys
 	char			*downk;
 	char			*delk;
 	char			bksp[2];
+	char			reserved_pad[6];
 }				t_tkeys;
 
 typedef struct	s_choice
 {
-	int				selected;
 	char			*title;
 	size_t			titlelen;
+	int				selected;
 	int				color;
 	struct s_choice	*next;
 	struct s_choice	*prev;
@@ -51,9 +52,10 @@ typedef struct	s_env
 	struct winsize	ws;
 	size_t			nlines;
 	size_t			ncols;
-	unsigned int	vscroll;
-	unsigned int	scroll_off;
+	size_t			vscroll;
+	size_t			scroll_off;
 	int				support_colors;
+	char			reserved_pad[4];
 }				t_env;
 
 /*
@@ -111,7 +113,7 @@ t_choice		*ft_chnew(char *title, int selected);
 void			ft_chpush(t_choice **headref, t_choice *new);
 void			ft_chdelone(t_choice **headref, t_choice *ch);
 void			ft_chdel(t_choice **headref);
-t_choice		*ft_chgetidx(t_choice *head, unsigned int idx);
+t_choice		*ft_chgetidx(t_choice *head, unsigned long idx);
 
 /*
 ** Misc/Utilities
@@ -119,7 +121,8 @@ t_choice		*ft_chgetidx(t_choice *head, unsigned int idx);
 
 int				ft_strasciieq(char *s, char c);
 int				outcap(char *name);
-int				movcap(unsigned int x, unsigned int y);
-void			fatal(const char *app, const char *err);
+int				movcap(int x, int y);
+void			fatal(const char *app,
+					const char *err) __attribute__((noreturn));
 
 #endif

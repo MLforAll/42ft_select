@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 20:05:30 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 14:37:42 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:35:58 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void		clear_choices(t_env *env)
 	size_t			len;
 
 	len = (env->nlines + 1 > env->ws.ws_row) ? env->ws.ws_row : env->nlines + 1;
-	movcap(0, len);
+	movcap(0, (int)len);
 	while (len--)
 	{
 		outcap("up");
@@ -83,12 +83,15 @@ static int	add_color(t_choice *ch, t_env *env)
 ** unsigned		index of choice
 */
 
-static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
+static int	print_elem(t_choice *ch,
+						t_env *env,
+						unsigned long ccol,
+						unsigned long idx)
 {
-	size_t			len;
-	unsigned int	off;
-	int				scroll;
-	int				colors;
+	size_t		len;
+	size_t		off;
+	int			scroll;
+	int			colors;
 
 	if (!ch || !ch->title || !env)
 		return (FALSE);
@@ -107,7 +110,8 @@ static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
 						: env->scroll_off + 1;
 	if (ch->selected || env->pos == idx)
 		outcap("me");
-	(colors) ? ft_putstr_fd("\033[0;39m", FT_OUT_FD) : 0;
+	if (colors)
+		ft_putstr_fd("\033[0;39m", FT_OUT_FD);
 	return (scroll);
 }
 
@@ -120,9 +124,9 @@ static int	print_elem(t_choice *ch, t_env *env, unsigned ccol, unsigned idx)
 void		print_with_env(t_env *env)
 {
 	t_choice		*choices;
-	unsigned int	idx;
-	unsigned int	cline;
-	unsigned int	ccol;
+	unsigned long	idx;
+	unsigned long	cline;
+	unsigned long	ccol;
 	int				scroll_sw;
 
 	if (!env)

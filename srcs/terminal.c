@@ -6,7 +6,7 @@
 /*   By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/09 19:20:41 by kdumarai          #+#    #+#             */
-/*   Updated: 2018/03/24 16:10:36 by kdumarai         ###   ########.fr       */
+/*   Updated: 2018/06/14 05:37:49 by kdumarai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void		signal_hdl(int sigc)
 
 	if (vsusp_char == 0)
 	{
-		vsusp_char = sigc;
+		vsusp_char = (char)sigc;
 		return ;
 	}
 	init_restore_display(NULL, NO);
@@ -87,7 +87,7 @@ int			set_read_timeout(cc_t timeout, struct termios *tptr)
 	static int				noget = FALSE;
 	static struct termios	t;
 	struct termios			*dest;
-	int						new_vmin;
+	cc_t					new_vmin;
 
 	if (!tptr)
 	{
@@ -135,11 +135,11 @@ int			init_restore_terminal(int init, char *vsusp_ptr)
 		ft_putendl_fd("Some signal couldn't be caught.", STDERR_FILENO);
 	t = saved_t;
 	t.c_lflag &= ~(ICANON | ECHO | ((!sigret || !isatty(1)) ? ISIG : 0));
-	t.c_oflag &= ~OPOST;
+	t.c_oflag &= (unsigned long)~OPOST;
 	set_read_timeout(0, &t);
 	if (tcsetattr(FT_OUT_FD, TCSADRAIN, &t) == -1)
 		return (FALSE);
-	(vsusp_ptr) ? *vsusp_ptr = saved_t.c_cc[VSUSP] : 0;
+	(vsusp_ptr) ? *vsusp_ptr = (char)saved_t.c_cc[VSUSP] : 0;
 	ospeed = (short)saved_t.c_ospeed;
 	return ((is_init = TRUE));
 }

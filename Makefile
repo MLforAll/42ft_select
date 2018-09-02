@@ -14,7 +14,7 @@ NAME = ft_select
 
 CC_FLAGS = -Wall -Werror -Wextra
 CC_LIB = -I includes -I libft/includes
-LD_FLAGS = -L libft -lft -ltermcap
+LD_FLAGS = -Llibft -lft -ltermcap
 
 LIBFT = libft/libft.a
 

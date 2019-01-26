@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kdumarai <kdumarai@student.42.fr>          +#+  +:+       +#+         #
+#    By: kelian <kelian@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/12/20 21:41:19 by kdumarai          #+#    #+#              #
-#    Updated: 2018/08/19 20:45:57 by kdumarai         ###   ########.fr        #
+#    Updated: 2019/01/26 22:41:42 by kelian           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,15 +78,21 @@ endif
 	@ printf "\033[0;39m\r"
 	@ gcc $(CC_FLAGS) $(CC_LIB) -c $< -o $@
 
-clean:
-	@ make clean -C $(dir $(LIBFT))
+cleanp:
 	@ rm -rf $(OBJDIR)
 	@ printf "$(PROJTEXT)Removed objects\n"
 
-fclean: clean
-	@ make fclean -C $(dir $(LIBFT))
+fcleanp: cleanp
 	@ rm -f $(NAME)
 	@ printf "$(PROJTEXT)Removed $(NAME)\n"
+
+rep: fcleanp all
+
+clean: cleanp
+	@ make clean -C $(dir $(LIBFT))
+
+fclean: fcleanp
+	@ make fclean -C $(dir $(LIBFT))
 
 re: fclean all
 
